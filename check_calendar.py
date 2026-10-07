@@ -72,7 +72,7 @@ def main():
                 fail(f"{label} 缺少 {prop}")
 
         if not uid.endswith("@lvlongrili"):
-            fail(f"{label} 的 UID 不是由比赛 ID 派生：{uid!r}")
+            fail(f"{label} 的 UID 不是稳定的日历 ID（应以 @lvlongrili 结尾）：{uid!r}")
 
         if "比赛：" not in description:
             fail(f"{label} 的备注没有比赛名称：{summary!r}")

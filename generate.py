@@ -5,6 +5,7 @@
 队名不翻译；备注里显示比赛名称，已结束的比赛备注里逐张列出地图比分。
 """
 
+import hashlib
 import json
 import os
 import re
@@ -97,6 +98,35 @@ def _parse_dt(value):
     if moment.tzinfo is None:
         moment = moment.replace(tzinfo=timezone.utc)
     return moment.astimezone(timezone.utc)
+
+
+def canonical_key(start: datetime, left: str, right: str) -> str:
+    """跨数据源稳定的比赛键：日期（UTC）+ 双方队名。
+
+    UID 必须与数据源无关：否则一旦更换数据源，iPhone 里同一场比赛会出现两条
+    （数据源各自的 id 不同）。用这个规范键，换源是原地更新而不是新增。
+    """
+    stamp = start.astimezone(timezone.utc).strftime("%Y-%m-%d")
+    raw = f"{stamp}|{left.strip().lower()}|{right.strip().lower()}"
+    return hashlib.sha1(raw.encode("utf-8")).hexdigest()[:16]
+
+
+# 合法的大比分终局（BO1/BO3/BO5/BO7 的正常结果），用于识别数据源给出的异常比分
+def score_is_sane(left, right) -> bool:
+    """判断系列赛比分是否可能是真实的终局。
+
+    用于挡掉数据源里自相矛盾的结果（实测遇到 BO1 却给出 1-1）。
+    规则：双方不等、胜方达到过半、总局数不超过 9。
+    """
+    if left is None or right is None:
+        return False
+    total = left + right
+    if total < 1 or total > 9:
+        return False
+    high, low = max(left, right), min(left, right)
+    if low >= high or high > 5:
+        return False
+    return high >= total // 2 + 1
 
 
 # ---------- 数据源：Cito CS2 ----------
@@ -266,7 +296,7 @@ def normalize(record: dict) -> dict | None:
     status = str(record.get("status") or "").lower()
     score_left = _as_int(record.get("team1Score"))
     score_right = _as_int(record.get("team2Score"))
-    finished = status == "completed" and score_left is not None and score_right is not None
+    finished = (status == "completed" and score_is_sane(score_left, score_right))
 
     bestof = _as_int(record.get("bestOf"))
     duration = BO_DURATION_HOURS.get(bestof, DEFAULT_DURATION_HOURS)
@@ -277,8 +307,14 @@ def normalize(record: dict) -> dict | None:
     if stage and stage.lower() not in title.lower():
         title = f"{title} - {stage}" if event_name else stage
 
+    data_note = ""
+    if status == "completed" and not finished and (score_left is not None or score_right is not None):
+        # 数据源声称已结束，但比分不可能是终局（例如 BO1 给出 1-1）：不显示该比分
+        data_note = f"比分待核实（数据源给出 {score_left}-{score_right}）"
+
     return {
-        "key": str(record.get("id") or "").strip(),
+        "key": canonical_key(start, left, right),
+        "source_id": str(record.get("id") or "").strip(),
         "start": start,
         "duration": timedelta(hours=duration),
         "left": left,
@@ -289,6 +325,7 @@ def normalize(record: dict) -> dict | None:
         "tournament": title,
         "maps": _map_rows(record) if finished else [],
         "status": status,
+        "data_note": data_note,
     }
 
 
@@ -449,8 +486,8 @@ def _lp_normalize(record: dict) -> dict | None:
     finished = bool(_as_int(record.get("finished"))) or \
         str(record.get("status") or "").lower() in ("finished", "completed")
     score_left, score_right = left["score"], right["score"]
-    if finished and (score_left is None or score_right is None):
-        finished = False  # 没有比分就不按「已结束」渲染
+    if finished and not score_is_sane(score_left, score_right):
+        finished = False  # 没有比分、或比分不可能是终局：不按「已结束」渲染
 
     bestof = _as_int(record.get("bestof"))
     duration = BO_DURATION_HOURS.get(bestof, DEFAULT_DURATION_HOURS)
@@ -460,8 +497,13 @@ def _lp_normalize(record: dict) -> dict | None:
     if section and section.lower() not in title.lower():
         title = f"{title} - {section}"
 
+    data_note = ""
+    if not finished and (score_left is not None or score_right is not None):
+        data_note = f"比分待核实（数据源给出 {score_left}-{score_right}）"
+
     return {
-        "key": str(record.get("match2id") or record.get("objectname") or "").strip(),
+        "key": canonical_key(start, left["name"], right["name"]),
+        "source_id": str(record.get("match2id") or record.get("objectname") or "").strip(),
         "start": start,
         "duration": timedelta(hours=duration),
         "left": left["name"],
@@ -472,6 +514,7 @@ def _lp_normalize(record: dict) -> dict | None:
         "tournament": title,
         "maps": _lp_games(record) if finished else [],
         "status": str(record.get("status") or ("finished" if finished else "upcoming")),
+        "data_note": data_note,
     }
 
 
@@ -610,6 +653,8 @@ def build_description(event: dict) -> str:
     lines = [f"比赛：{event['tournament'] or '未知赛事'}"]
     if event["bestof"]:
         lines.append(f"赛制：BO{event['bestof']}")
+    if event.get("data_note"):
+        lines.append(event["data_note"])
 
     if event["finished"]:
         if event["maps"]:
@@ -624,7 +669,7 @@ def build_description(event: dict) -> str:
         else:
             lines.append("地图比分：数据缺失")
 
-    lines.append(f"比赛ID：{event['key']}")
+    lines.append(f"比赛ID：{event.get('source_id') or event['key']}")
     return "\n".join(lines)
 
 
@@ -683,6 +728,7 @@ def _same_ignoring_dtstamp(existing: str, fresh: str) -> bool:
 def _event_to_json(event: dict) -> dict:
     return {
         "key": event["key"],
+        "source_id": event.get("source_id", ""),
         "start": event["start"].astimezone(timezone.utc).isoformat(),
         "duration_hours": event["duration"].total_seconds() / 3600.0,
         "left": event["left"],
@@ -693,6 +739,7 @@ def _event_to_json(event: dict) -> dict:
         "tournament": event["tournament"],
         "maps": event["maps"],
         "status": event["status"],
+        "data_note": event.get("data_note", ""),
     }
 
 
@@ -708,6 +755,7 @@ def _event_from_json(data: dict) -> dict | None:
     score = data.get("score")
     return {
         "key": str(data["key"]),
+        "source_id": str(data.get("source_id") or ""),
         "start": start,
         "duration": duration,
         "left": str(data["left"]),
@@ -718,6 +766,7 @@ def _event_from_json(data: dict) -> dict | None:
         "tournament": str(data.get("tournament") or ""),
         "maps": data.get("maps") or [],
         "status": str(data.get("status") or ""),
+        "data_note": str(data.get("data_note") or ""),
     }
 
 
