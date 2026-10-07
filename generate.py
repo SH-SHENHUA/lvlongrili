@@ -60,6 +60,9 @@ MAX_LINE_OCTETS = 75
 BO_DURATION_HOURS = {1: 1.0, 2: 1.5, 3: 2.5, 4: 3.5, 5: 4.0}
 DEFAULT_DURATION_HOURS = 2.0
 
+# 已过开赛时间这么久仍未结束的比赛，标注「结果未更新（可能延期或取消）」
+STALE_HOURS = 12
+
 
 # ---------- 工具 ----------
 
@@ -263,6 +266,11 @@ def _map_rows(record: dict) -> list:
     for item in record.get("maps") or []:
         if not isinstance(item, dict):
             continue
+        # 系列赛提前结束（例如 2-0）时，接口仍会带上未打的那些地图：
+        # mapName 为 TBA、resultType 为 not_played，这些不能列进比分。
+        result_type = str(item.get("resultType") or "").lower()
+        if result_type in ("not_played", "unplayed", "notplayed"):
+            continue
         name = str(item.get("mapName") or item.get("map") or "").strip()
         left = _as_int(item.get("team1Score"))
         right = _as_int(item.get("team2Score"))
@@ -274,9 +282,10 @@ def _map_rows(record: dict) -> list:
         note = ""
         if item.get("isForfeit"):
             note = "（弃权）"
-        elif item.get("resultType") not in (None, "played"):
-            note = f"（{item.get('resultType')}）"
         if not name and left is None and right is None:
+            continue
+        if left is None and right is None and not note:
+            # 没有任何比分也没标注，视为无效条目
             continue
         rows.append({"map": name or "?", "scores": [left, right],
                      "number": _as_int(item.get("mapNumber")) or 0, "note": note})
@@ -302,15 +311,23 @@ def normalize(record: dict) -> dict | None:
     duration = BO_DURATION_HOURS.get(bestof, DEFAULT_DURATION_HOURS)
 
     event_name = str(record.get("eventName") or "").strip()
+    if not event_name:
+        # 少数记录只有嵌套的 event 对象
+        event_obj = record.get("event")
+        if isinstance(event_obj, dict):
+            event_name = str(event_obj.get("name") or "").strip()
     stage = str(record.get("stageName") or "").strip()
     title = event_name or "未知赛事"
     if stage and stage.lower() not in title.lower():
         title = f"{title} - {stage}" if event_name else stage
 
-    data_note = ""
+    notes = []
     if status == "completed" and not finished and (score_left is not None or score_right is not None):
         # 数据源声称已结束，但比分不可能是终局（例如 BO1 给出 1-1）：不显示该比分
-        data_note = f"比分待核实（数据源给出 {score_left}-{score_right}）"
+        notes.append(f"比分待核实（数据源给出 {score_left}-{score_right}）")
+    if not finished and start + timedelta(hours=STALE_HOURS) < _now_utc():
+        # 已远超开赛时间却仍显示未结束：多为延期或取消，明确标注，避免看着像漏了结果
+        notes.append(f"结果未更新（已过开赛时间 {STALE_HOURS} 小时以上，可能延期或取消）")
 
     return {
         "key": canonical_key(start, left, right),
@@ -325,7 +342,7 @@ def normalize(record: dict) -> dict | None:
         "tournament": title,
         "maps": _map_rows(record) if finished else [],
         "status": status,
-        "data_note": data_note,
+        "data_note": "；".join(notes),
     }
 
 
@@ -500,6 +517,9 @@ def _lp_normalize(record: dict) -> dict | None:
     data_note = ""
     if not finished and (score_left is not None or score_right is not None):
         data_note = f"比分待核实（数据源给出 {score_left}-{score_right}）"
+    if not finished and start + timedelta(hours=STALE_HOURS) < _now_utc():
+        stale = f"结果未更新（已过开赛时间 {STALE_HOURS} 小时以上，可能延期或取消）"
+        data_note = f"{data_note}；{stale}" if data_note else stale
 
     return {
         "key": canonical_key(start, left["name"], right["name"]),

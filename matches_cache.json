@@ -1,0 +1,2138 @@
+{
+ "count": 55,
+ "matches": [
+  {
+   "bestof": 3,
+   "data_note": "",
+   "duration_hours": 2.5,
+   "finished": true,
+   "key": "6977dc31310382a7",
+   "left": "SINNERS",
+   "maps": [
+    {
+     "map": "Mirage",
+     "note": "",
+     "number": 1,
+     "scores": [
+      11,
+      13
+     ]
+    },
+    {
+     "map": "Nuke",
+     "note": "",
+     "number": 2,
+     "scores": [
+      5,
+      13
+     ]
+    }
+   ],
+   "right": "Spirit",
+   "score": [
+    0,
+    2
+   ],
+   "source_id": "cs2-match-2389265",
+   "start": "2026-01-16T12:55:00+00:00",
+   "status": "completed",
+   "tournament": "BLAST Bounty 2026 Season 1"
+  },
+  {
+   "bestof": 3,
+   "data_note": "",
+   "duration_hours": 2.5,
+   "finished": true,
+   "key": "c7993def20dbd579",
+   "left": "Spirit",
+   "maps": [
+    {
+     "map": "Ancient",
+     "note": "",
+     "number": 1,
+     "scores": [
+      13,
+      8
+     ]
+    },
+    {
+     "map": "Dust2",
+     "note": "",
+     "number": 2,
+     "scores": [
+      13,
+      5
+     ]
+    }
+   ],
+   "right": "Inner Circle",
+   "score": [
+    2,
+    0
+   ],
+   "source_id": "cs2-match-2389272",
+   "start": "2026-01-18T12:45:00+00:00",
+   "status": "completed",
+   "tournament": "BLAST Bounty 2026 Season 1"
+  },
+  {
+   "bestof": 3,
+   "data_note": "",
+   "duration_hours": 2.5,
+   "finished": true,
+   "key": "395a1710856d18aa",
+   "left": "Spirit",
+   "maps": [
+    {
+     "map": "Overpass",
+     "note": "",
+     "number": 1,
+     "scores": [
+      13,
+      5
+     ]
+    },
+    {
+     "map": "Mirage",
+     "note": "",
+     "number": 2,
+     "scores": [
+      9,
+      13
+     ]
+    },
+    {
+     "map": "Ancient",
+     "note": "",
+     "number": 3,
+     "scores": [
+      8,
+      13
+     ]
+    }
+   ],
+   "right": "PARIVISION",
+   "score": [
+    1,
+    2
+   ],
+   "source_id": "cs2-match-2389278",
+   "start": "2026-01-23T17:50:00+00:00",
+   "status": "completed",
+   "tournament": "BLAST Bounty 2026 Season 1 Finals"
+  },
+  {
+   "bestof": 3,
+   "data_note": "",
+   "duration_hours": 2.5,
+   "finished": true,
+   "key": "5b68a7810a1e37eb",
+   "left": "Spirit",
+   "maps": [
+    {
+     "map": "Dust2",
+     "note": "",
+     "number": 1,
+     "scores": [
+      16,
+      13
+     ]
+    },
+    {
+     "map": "Overpass",
+     "note": "",
+     "number": 2,
+     "scores": [
+      13,
+      8
+     ]
+    }
+   ],
+   "right": "Astralis",
+   "score": [
+    2,
+    0
+   ],
+   "source_id": "cs2-match-2389640",
+   "start": "2026-01-31T16:45:00+00:00",
+   "status": "completed",
+   "tournament": "IEM Kraków 2026"
+  },
+  {
+   "bestof": 3,
+   "data_note": "",
+   "duration_hours": 2.5,
+   "finished": true,
+   "key": "80cb1ffdedb0f809",
+   "left": "Spirit",
+   "maps": [
+    {
+     "map": "Mirage",
+     "note": "",
+     "number": 1,
+     "scores": [
+      16,
+      14
+     ]
+    },
+    {
+     "map": "Dust2",
+     "note": "",
+     "number": 2,
+     "scores": [
+      13,
+      3
+     ]
+    }
+   ],
+   "right": "Natus Vincere",
+   "score": [
+    2,
+    0
+   ],
+   "source_id": "cs2-match-2389647",
+   "start": "2026-02-01T19:30:00+00:00",
+   "status": "completed",
+   "tournament": "IEM Kraków 2026"
+  },
+  {
+   "bestof": 3,
+   "data_note": "",
+   "duration_hours": 2.5,
+   "finished": true,
+   "key": "6a83aebb0e925464",
+   "left": "Spirit",
+   "maps": [
+    {
+     "map": "Anubis",
+     "note": "",
+     "number": 1,
+     "scores": [
+      13,
+      8
+     ]
+    },
+    {
+     "map": "Overpass",
+     "note": "",
+     "number": 2,
+     "scores": [
+      8,
+      13
+     ]
+    },
+    {
+     "map": "Dust2",
+     "note": "",
+     "number": 3,
+     "scores": [
+      16,
+      13
+     ]
+    }
+   ],
+   "right": "G2",
+   "score": [
+    2,
+    1
+   ],
+   "source_id": "cs2-match-2389659",
+   "start": "2026-02-03T15:30:00+00:00",
+   "status": "completed",
+   "tournament": "IEM Kraków 2026"
+  },
+  {
+   "bestof": 3,
+   "data_note": "",
+   "duration_hours": 2.5,
+   "finished": true,
+   "key": "2458f29f24511067",
+   "left": "Spirit",
+   "maps": [
+    {
+     "map": "Mirage",
+     "note": "",
+     "number": 1,
+     "scores": [
+      13,
+      16
+     ]
+    },
+    {
+     "map": "Dust2",
+     "note": "",
+     "number": 2,
+     "scores": [
+      13,
+      8
+     ]
+    },
+    {
+     "map": "Nuke",
+     "note": "",
+     "number": 3,
+     "scores": [
+      7,
+      13
+     ]
+    }
+   ],
+   "right": "FURIA",
+   "score": [
+    1,
+    2
+   ],
+   "source_id": "cs2-match-2389663",
+   "start": "2026-02-07T14:45:00+00:00",
+   "status": "completed",
+   "tournament": "IEM Kraków 2026"
+  },
+  {
+   "bestof": 3,
+   "data_note": "",
+   "duration_hours": 2.5,
+   "finished": true,
+   "key": "7d73aab2e0eab133",
+   "left": "Spirit",
+   "maps": [
+    {
+     "map": "Dust2",
+     "note": "",
+     "number": 1,
+     "scores": [
+      13,
+      8
+     ]
+    },
+    {
+     "map": "Mirage",
+     "note": "",
+     "number": 2,
+     "scores": [
+      13,
+      3
+     ]
+    }
+   ],
+   "right": "MOUZ",
+   "score": [
+    2,
+    0
+   ],
+   "source_id": "cs2-match-2389665",
+   "start": "2026-02-08T12:30:00+00:00",
+   "status": "completed",
+   "tournament": "IEM Kraków 2026"
+  },
+  {
+   "bestof": 3,
+   "data_note": "",
+   "duration_hours": 2.5,
+   "finished": true,
+   "key": "d26a7e16b5a7f790",
+   "left": "Spirit",
+   "maps": [
+    {
+     "map": "Nuke",
+     "note": "",
+     "number": 1,
+     "scores": [
+      13,
+      10
+     ]
+    },
+    {
+     "map": "Overpass",
+     "note": "",
+     "number": 2,
+     "scores": [
+      13,
+      7
+     ]
+    }
+   ],
+   "right": "3DMAX",
+   "score": [
+    2,
+    0
+   ],
+   "source_id": "cs2-match-2391103",
+   "start": "2026-03-06T13:40:00+00:00",
+   "status": "completed",
+   "tournament": "ESL Pro League Season 23 Stage 2"
+  },
+  {
+   "bestof": 3,
+   "data_note": "",
+   "duration_hours": 2.5,
+   "finished": true,
+   "key": "73b9ded72386ab71",
+   "left": "Spirit",
+   "maps": [
+    {
+     "map": "Mirage",
+     "note": "",
+     "number": 1,
+     "scores": [
+      4,
+      13
+     ]
+    },
+    {
+     "map": "Nuke",
+     "note": "",
+     "number": 2,
+     "scores": [
+      13,
+      9
+     ]
+    },
+    {
+     "map": "Anubis",
+     "note": "",
+     "number": 3,
+     "scores": [
+      13,
+      7
+     ]
+    }
+   ],
+   "right": "B8",
+   "score": [
+    2,
+    1
+   ],
+   "source_id": "cs2-match-2391115",
+   "start": "2026-03-07T19:20:00+00:00",
+   "status": "completed",
+   "tournament": "ESL Pro League Season 23 Stage 2"
+  },
+  {
+   "bestof": 3,
+   "data_note": "",
+   "duration_hours": 2.5,
+   "finished": true,
+   "key": "4897789460e723ad",
+   "left": "Spirit",
+   "maps": [
+    {
+     "map": "Ancient",
+     "note": "",
+     "number": 1,
+     "scores": [
+      13,
+      9
+     ]
+    },
+    {
+     "map": "Anubis",
+     "note": "",
+     "number": 2,
+     "scores": [
+      13,
+      10
+     ]
+    }
+   ],
+   "right": "G2",
+   "score": [
+    2,
+    0
+   ],
+   "source_id": "cs2-match-2391123",
+   "start": "2026-03-08T18:30:00+00:00",
+   "status": "completed",
+   "tournament": "ESL Pro League Season 23 Stage 2"
+  },
+  {
+   "bestof": 3,
+   "data_note": "",
+   "duration_hours": 2.5,
+   "finished": true,
+   "key": "36fb22c266647d48",
+   "left": "Astralis",
+   "maps": [
+    {
+     "map": "Dust2",
+     "note": "",
+     "number": 1,
+     "scores": [
+      13,
+      6
+     ]
+    },
+    {
+     "map": "Ancient",
+     "note": "",
+     "number": 2,
+     "scores": [
+      13,
+      7
+     ]
+    }
+   ],
+   "right": "Spirit",
+   "score": [
+    2,
+    0
+   ],
+   "source_id": "cs2-match-2391137",
+   "start": "2026-03-13T20:30:00+00:00",
+   "status": "completed",
+   "tournament": "ESL Pro League Season 23 Finals"
+  },
+  {
+   "bestof": 3,
+   "data_note": "",
+   "duration_hours": 2.5,
+   "finished": true,
+   "key": "666fbcbbf450e102",
+   "left": "Spirit",
+   "maps": [
+    {
+     "map": "Mirage",
+     "note": "",
+     "number": 1,
+     "scores": [
+      13,
+      8
+     ]
+    },
+    {
+     "map": "Ancient",
+     "note": "",
+     "number": 2,
+     "scores": [
+      13,
+      11
+     ]
+    }
+   ],
+   "right": "Liquid",
+   "score": [
+    2,
+    0
+   ],
+   "source_id": "cs2-match-2390816",
+   "start": "2026-03-19T14:00:00+00:00",
+   "status": "completed",
+   "tournament": "BLAST Open Rotterdam 2026"
+  },
+  {
+   "bestof": 3,
+   "data_note": "",
+   "duration_hours": 2.5,
+   "finished": true,
+   "key": "527386d2fc8eb952",
+   "left": "PARIVISION",
+   "maps": [
+    {
+     "map": "Anubis",
+     "note": "",
+     "number": 1,
+     "scores": [
+      13,
+      3
+     ]
+    },
+    {
+     "map": "Ancient",
+     "note": "",
+     "number": 2,
+     "scores": [
+      13,
+      8
+     ]
+    }
+   ],
+   "right": "Spirit",
+   "score": [
+    2,
+    0
+   ],
+   "source_id": "cs2-match-2391761",
+   "start": "2026-03-21T18:35:00+00:00",
+   "status": "completed",
+   "tournament": "BLAST Open Rotterdam 2026"
+  },
+  {
+   "bestof": 3,
+   "data_note": "",
+   "duration_hours": 2.5,
+   "finished": true,
+   "key": "7df331fb42d4fc92",
+   "left": "9z",
+   "maps": [
+    {
+     "map": "Overpass",
+     "note": "",
+     "number": 1,
+     "scores": [
+      6,
+      13
+     ]
+    },
+    {
+     "map": "Dust2",
+     "note": "",
+     "number": 2,
+     "scores": [
+      6,
+      13
+     ]
+    }
+   ],
+   "right": "Spirit",
+   "score": [
+    0,
+    2
+   ],
+   "source_id": "cs2-match-2391766",
+   "start": "2026-03-22T20:20:00+00:00",
+   "status": "completed",
+   "tournament": "BLAST Open Rotterdam 2026"
+  },
+  {
+   "bestof": 3,
+   "data_note": "",
+   "duration_hours": 2.5,
+   "finished": true,
+   "key": "bde3cae4718a7809",
+   "left": "The MongolZ",
+   "maps": [
+    {
+     "map": "Nuke",
+     "note": "",
+     "number": 1,
+     "scores": [
+      13,
+      11
+     ]
+    },
+    {
+     "map": "Overpass",
+     "note": "",
+     "number": 2,
+     "scores": [
+      13,
+      9
+     ]
+    }
+   ],
+   "right": "Spirit",
+   "score": [
+    2,
+    0
+   ],
+   "source_id": "cs2-match-2391770",
+   "start": "2026-03-23T20:45:00+00:00",
+   "status": "completed",
+   "tournament": "BLAST Open Rotterdam 2026"
+  },
+  {
+   "bestof": 3,
+   "data_note": "",
+   "duration_hours": 2.5,
+   "finished": true,
+   "key": "e14cefe1a53cb9e0",
+   "left": "Spirit",
+   "maps": [
+    {
+     "map": "Ancient",
+     "note": "",
+     "number": 1,
+     "scores": [
+      13,
+      2
+     ]
+    },
+    {
+     "map": "Dust2",
+     "note": "",
+     "number": 2,
+     "scores": [
+      13,
+      11
+     ]
+    }
+   ],
+   "right": "Liquid",
+   "score": [
+    2,
+    0
+   ],
+   "source_id": "cs2-match-2393083",
+   "start": "2026-04-13T15:30:00+00:00",
+   "status": "completed",
+   "tournament": "IEM Rio 2026"
+  },
+  {
+   "bestof": 3,
+   "data_note": "",
+   "duration_hours": 2.5,
+   "finished": true,
+   "key": "41bd115bd4a6b987",
+   "left": "Spirit",
+   "maps": [
+    {
+     "map": "Anubis",
+     "note": "",
+     "number": 1,
+     "scores": [
+      4,
+      13
+     ]
+    },
+    {
+     "map": "Mirage",
+     "note": "",
+     "number": 2,
+     "scores": [
+      5,
+      13
+     ]
+    }
+   ],
+   "right": "Falcons",
+   "score": [
+    0,
+    2
+   ],
+   "source_id": "cs2-match-2393226",
+   "start": "2026-04-14T16:40:00+00:00",
+   "status": "completed",
+   "tournament": "IEM Rio 2026"
+  },
+  {
+   "bestof": 3,
+   "data_note": "",
+   "duration_hours": 2.5,
+   "finished": true,
+   "key": "765a55cf46e0cf79",
+   "left": "RED Canids",
+   "maps": [
+    {
+     "map": "Mirage",
+     "note": "",
+     "number": 1,
+     "scores": [
+      13,
+      8
+     ]
+    },
+    {
+     "map": "Ancient",
+     "note": "",
+     "number": 2,
+     "scores": [
+      8,
+      13
+     ]
+    },
+    {
+     "map": "Overpass",
+     "note": "",
+     "number": 3,
+     "scores": [
+      2,
+      13
+     ]
+    }
+   ],
+   "right": "Spirit",
+   "score": [
+    1,
+    2
+   ],
+   "source_id": "cs2-match-2393232",
+   "start": "2026-04-15T13:00:00+00:00",
+   "status": "completed",
+   "tournament": "IEM Rio 2026"
+  },
+  {
+   "bestof": 3,
+   "data_note": "",
+   "duration_hours": 2.5,
+   "finished": true,
+   "key": "6a2c173464ed9686",
+   "left": "G2",
+   "maps": [
+    {
+     "map": "Mirage",
+     "note": "",
+     "number": 1,
+     "scores": [
+      7,
+      13
+     ]
+    },
+    {
+     "map": "Dust2",
+     "note": "",
+     "number": 2,
+     "scores": [
+      11,
+      13
+     ]
+    }
+   ],
+   "right": "Spirit",
+   "score": [
+    0,
+    2
+   ],
+   "source_id": "cs2-match-2393237",
+   "start": "2026-04-15T18:00:00+00:00",
+   "status": "completed",
+   "tournament": "IEM Rio 2026"
+  },
+  {
+   "bestof": 3,
+   "data_note": "",
+   "duration_hours": 2.5,
+   "finished": true,
+   "key": "249d11d970930955",
+   "left": "Spirit",
+   "maps": [
+    {
+     "map": "Dust2",
+     "note": "",
+     "number": 1,
+     "scores": [
+      13,
+      5
+     ]
+    },
+    {
+     "map": "Mirage",
+     "note": "",
+     "number": 2,
+     "scores": [
+      13,
+      8
+     ]
+    }
+   ],
+   "right": "MOUZ",
+   "score": [
+    2,
+    0
+   ],
+   "source_id": "cs2-match-2393240",
+   "start": "2026-04-17T15:00:00+00:00",
+   "status": "completed",
+   "tournament": "IEM Rio 2026"
+  },
+  {
+   "bestof": 3,
+   "data_note": "",
+   "duration_hours": 2.5,
+   "finished": true,
+   "key": "65226061f08f4061",
+   "left": "Falcons",
+   "maps": [
+    {
+     "map": "Dust2",
+     "note": "",
+     "number": 1,
+     "scores": [
+      7,
+      13
+     ]
+    },
+    {
+     "map": "Mirage",
+     "note": "",
+     "number": 2,
+     "scores": [
+      4,
+      13
+     ]
+    }
+   ],
+   "right": "Spirit",
+   "score": [
+    0,
+    2
+   ],
+   "source_id": "cs2-match-2393242",
+   "start": "2026-04-18T15:00:00+00:00",
+   "status": "completed",
+   "tournament": "IEM Rio 2026"
+  },
+  {
+   "bestof": 5,
+   "data_note": "",
+   "duration_hours": 4.0,
+   "finished": true,
+   "key": "355ef82a7c40a157",
+   "left": "Spirit",
+   "maps": [
+    {
+     "map": "Mirage",
+     "note": "",
+     "number": 1,
+     "scores": [
+      13,
+      16
+     ]
+    },
+    {
+     "map": "Nuke",
+     "note": "",
+     "number": 2,
+     "scores": [
+      10,
+      13
+     ]
+    },
+    {
+     "map": "Dust2",
+     "note": "",
+     "number": 3,
+     "scores": [
+      5,
+      13
+     ]
+    }
+   ],
+   "right": "Vitality",
+   "score": [
+    0,
+    3
+   ],
+   "source_id": "cs2-match-2393245",
+   "start": "2026-04-19T17:00:00+00:00",
+   "status": "completed",
+   "tournament": "IEM Rio 2026"
+  },
+  {
+   "bestof": 3,
+   "data_note": "",
+   "duration_hours": 2.5,
+   "finished": true,
+   "key": "6c112dc45901e47a",
+   "left": "Spirit",
+   "maps": [
+    {
+     "map": "Dust2",
+     "note": "",
+     "number": 1,
+     "scores": [
+      13,
+      6
+     ]
+    },
+    {
+     "map": "Ancient",
+     "note": "",
+     "number": 2,
+     "scores": [
+      13,
+      3
+     ]
+    }
+   ],
+   "right": "The Huns",
+   "score": [
+    2,
+    0
+   ],
+   "source_id": "cs2-match-2394121",
+   "start": "2026-05-09T10:00:00+00:00",
+   "status": "completed",
+   "tournament": "PGL Astana 2026"
+  },
+  {
+   "bestof": 3,
+   "data_note": "",
+   "duration_hours": 2.5,
+   "finished": true,
+   "key": "db9ba724a57886fb",
+   "left": "The MongolZ",
+   "maps": [
+    {
+     "map": "Dust2",
+     "note": "",
+     "number": 1,
+     "scores": [
+      11,
+      13
+     ]
+    },
+    {
+     "map": "Ancient",
+     "note": "",
+     "number": 2,
+     "scores": [
+      16,
+      19
+     ]
+    }
+   ],
+   "right": "Spirit",
+   "score": [
+    0,
+    2
+   ],
+   "source_id": "cs2-match-2394126",
+   "start": "2026-05-10T08:40:00+00:00",
+   "status": "completed",
+   "tournament": "PGL Astana 2026"
+  },
+  {
+   "bestof": 3,
+   "data_note": "",
+   "duration_hours": 2.5,
+   "finished": true,
+   "key": "602444b0ed8e59fc",
+   "left": "FURIA",
+   "maps": [
+    {
+     "map": "Dust2",
+     "note": "",
+     "number": 1,
+     "scores": [
+      8,
+      13
+     ]
+    },
+    {
+     "map": "Overpass",
+     "note": "",
+     "number": 2,
+     "scores": [
+      16,
+      12
+     ]
+    },
+    {
+     "map": "Mirage",
+     "note": "",
+     "number": 3,
+     "scores": [
+      11,
+      13
+     ]
+    }
+   ],
+   "right": "Spirit",
+   "score": [
+    1,
+    2
+   ],
+   "source_id": "cs2-match-2394138",
+   "start": "2026-05-11T13:10:00+00:00",
+   "status": "completed",
+   "tournament": "PGL Astana 2026"
+  },
+  {
+   "bestof": 3,
+   "data_note": "",
+   "duration_hours": 2.5,
+   "finished": true,
+   "key": "2025e1d4c90c55a6",
+   "left": "Spirit",
+   "maps": [
+    {
+     "map": "Dust2",
+     "note": "",
+     "number": 1,
+     "scores": [
+      13,
+      6
+     ]
+    },
+    {
+     "map": "Ancient",
+     "note": "",
+     "number": 2,
+     "scores": [
+      13,
+      11
+     ]
+    }
+   ],
+   "right": "G2",
+   "score": [
+    2,
+    0
+   ],
+   "source_id": "cs2-match-2394150",
+   "start": "2026-05-15T08:20:00+00:00",
+   "status": "completed",
+   "tournament": "PGL Astana 2026"
+  },
+  {
+   "bestof": 3,
+   "data_note": "",
+   "duration_hours": 2.5,
+   "finished": true,
+   "key": "3797750634d93c5b",
+   "left": "MOUZ",
+   "maps": [
+    {
+     "map": "Dust2",
+     "note": "",
+     "number": 1,
+     "scores": [
+      3,
+      13
+     ]
+    },
+    {
+     "map": "Nuke",
+     "note": "",
+     "number": 2,
+     "scores": [
+      2,
+      13
+     ]
+    }
+   ],
+   "right": "Spirit",
+   "score": [
+    0,
+    2
+   ],
+   "source_id": "cs2-match-2394153",
+   "start": "2026-05-16T10:00:00+00:00",
+   "status": "completed",
+   "tournament": "PGL Astana 2026"
+  },
+  {
+   "bestof": 5,
+   "data_note": "",
+   "duration_hours": 4.0,
+   "finished": true,
+   "key": "cca4374156a359d1",
+   "left": "Spirit",
+   "maps": [
+    {
+     "map": "Dust2",
+     "note": "",
+     "number": 1,
+     "scores": [
+      16,
+      12
+     ]
+    },
+    {
+     "map": "Mirage",
+     "note": "",
+     "number": 2,
+     "scores": [
+      13,
+      7
+     ]
+    },
+    {
+     "map": "Ancient",
+     "note": "",
+     "number": 3,
+     "scores": [
+      13,
+      10
+     ]
+    }
+   ],
+   "right": "Falcons",
+   "score": [
+    3,
+    0
+   ],
+   "source_id": "cs2-match-2394156",
+   "start": "2026-05-17T11:00:00+00:00",
+   "status": "completed",
+   "tournament": "PGL Astana 2026"
+  },
+  {
+   "bestof": 1,
+   "data_note": "",
+   "duration_hours": 1.0,
+   "finished": true,
+   "key": "9b459f519c3c67be",
+   "left": "Spirit",
+   "maps": [
+    {
+     "map": "Mirage",
+     "note": "",
+     "number": 1,
+     "scores": [
+      13,
+      5
+     ]
+    }
+   ],
+   "right": "BETBOOM",
+   "score": [
+    1,
+    0
+   ],
+   "source_id": "cs2-match-2394865",
+   "start": "2026-06-06T13:50:00+00:00",
+   "status": "completed",
+   "tournament": "IEM Cologne Major 2026 Stage 2"
+  },
+  {
+   "bestof": 1,
+   "data_note": "",
+   "duration_hours": 1.0,
+   "finished": true,
+   "key": "0c39fc5aa042c9a6",
+   "left": "Spirit",
+   "maps": [
+    {
+     "map": "Mirage",
+     "note": "",
+     "number": 1,
+     "scores": [
+      13,
+      1
+     ]
+    }
+   ],
+   "right": "MIBR",
+   "score": [
+    1,
+    0
+   ],
+   "source_id": "cs2-match-2394879",
+   "start": "2026-06-06T19:40:00+00:00",
+   "status": "completed",
+   "tournament": "IEM Cologne Major 2026 Stage 2"
+  },
+  {
+   "bestof": 3,
+   "data_note": "",
+   "duration_hours": 2.5,
+   "finished": true,
+   "key": "375fc0eedbe14c6d",
+   "left": "Spirit",
+   "maps": [
+    {
+     "map": "Mirage",
+     "note": "",
+     "number": 1,
+     "scores": [
+      13,
+      3
+     ]
+    },
+    {
+     "map": "Nuke",
+     "note": "",
+     "number": 2,
+     "scores": [
+      13,
+      1
+     ]
+    }
+   ],
+   "right": "9z",
+   "score": [
+    2,
+    0
+   ],
+   "source_id": "cs2-match-2394888",
+   "start": "2026-06-07T17:00:00+00:00",
+   "status": "completed",
+   "tournament": "IEM Cologne Major 2026 Stage 2"
+  },
+  {
+   "bestof": 3,
+   "data_note": "",
+   "duration_hours": 2.5,
+   "finished": true,
+   "key": "dfe8f27c51b87117",
+   "left": "Natus Vincere",
+   "maps": [
+    {
+     "map": "Dust2",
+     "note": "",
+     "number": 1,
+     "scores": [
+      1,
+      13
+     ]
+    },
+    {
+     "map": "Anubis",
+     "note": "",
+     "number": 2,
+     "scores": [
+      8,
+      13
+     ]
+    }
+   ],
+   "right": "Spirit",
+   "score": [
+    0,
+    2
+   ],
+   "source_id": "cs2-match-2394900",
+   "start": "2026-06-11T18:40:00+00:00",
+   "status": "completed",
+   "tournament": "IEM Cologne Major 2026"
+  },
+  {
+   "bestof": 3,
+   "data_note": "",
+   "duration_hours": 2.5,
+   "finished": true,
+   "key": "50e3bd414c14fc83",
+   "left": "Aurora",
+   "maps": [
+    {
+     "map": "Dust2",
+     "note": "",
+     "number": 1,
+     "scores": [
+      13,
+      9
+     ]
+    },
+    {
+     "map": "Anubis",
+     "note": "",
+     "number": 2,
+     "scores": [
+      4,
+      13
+     ]
+    },
+    {
+     "map": "Nuke",
+     "note": "",
+     "number": 3,
+     "scores": [
+      5,
+      13
+     ]
+    }
+   ],
+   "right": "Spirit",
+   "score": [
+    1,
+    2
+   ],
+   "source_id": "cs2-match-2394977",
+   "start": "2026-06-12T17:25:00+00:00",
+   "status": "completed",
+   "tournament": "IEM Cologne Major 2026"
+  },
+  {
+   "bestof": 3,
+   "data_note": "",
+   "duration_hours": 2.5,
+   "finished": true,
+   "key": "72a97ef99ac8b574",
+   "left": "Spirit",
+   "maps": [
+    {
+     "map": "Overpass",
+     "note": "",
+     "number": 1,
+     "scores": [
+      12,
+      16
+     ]
+    },
+    {
+     "map": "Mirage",
+     "note": "",
+     "number": 2,
+     "scores": [
+      16,
+      13
+     ]
+    },
+    {
+     "map": "Dust2",
+     "note": "",
+     "number": 3,
+     "scores": [
+      16,
+      14
+     ]
+    }
+   ],
+   "right": "9z",
+   "score": [
+    2,
+    1
+   ],
+   "source_id": "cs2-match-2394986",
+   "start": "2026-06-13T18:55:00+00:00",
+   "status": "completed",
+   "tournament": "IEM Cologne Major 2026"
+  },
+  {
+   "bestof": 3,
+   "data_note": "",
+   "duration_hours": 2.5,
+   "finished": true,
+   "key": "938eb5ca268f6f1b",
+   "left": "G2",
+   "maps": [
+    {
+     "map": "Overpass",
+     "note": "",
+     "number": 1,
+     "scores": [
+      13,
+      9
+     ]
+    },
+    {
+     "map": "Dust2",
+     "note": "",
+     "number": 2,
+     "scores": [
+      14,
+      16
+     ]
+    },
+    {
+     "map": "Mirage",
+     "note": "",
+     "number": 3,
+     "scores": [
+      22,
+      25
+     ]
+    }
+   ],
+   "right": "Spirit",
+   "score": [
+    1,
+    2
+   ],
+   "source_id": "cs2-match-2394998",
+   "start": "2026-06-19T13:45:00+00:00",
+   "status": "completed",
+   "tournament": "IEM Cologne Major 2026"
+  },
+  {
+   "bestof": 3,
+   "data_note": "",
+   "duration_hours": 2.5,
+   "finished": true,
+   "key": "ca43df1cbe154576",
+   "left": "Spirit",
+   "maps": [
+    {
+     "map": "Anubis",
+     "note": "",
+     "number": 1,
+     "scores": [
+      14,
+      16
+     ]
+    },
+    {
+     "map": "Mirage",
+     "note": "",
+     "number": 2,
+     "scores": [
+      13,
+      8
+     ]
+    },
+    {
+     "map": "Dust2",
+     "note": "",
+     "number": 3,
+     "scores": [
+      12,
+      16
+     ]
+    }
+   ],
+   "right": "Falcons",
+   "score": [
+    1,
+    2
+   ],
+   "source_id": "cs2-match-2395001",
+   "start": "2026-06-20T17:00:00+00:00",
+   "status": "completed",
+   "tournament": "IEM Cologne Major 2026"
+  },
+  {
+   "bestof": 3,
+   "data_note": "",
+   "duration_hours": 2.5,
+   "finished": true,
+   "key": "cad0c3aaff591c3a",
+   "left": "OG",
+   "maps": [
+    {
+     "map": "Cache",
+     "note": "",
+     "number": 1,
+     "scores": [
+      4,
+      13
+     ]
+    },
+    {
+     "map": "Dust2",
+     "note": "",
+     "number": 2,
+     "scores": [
+      13,
+      11
+     ]
+    },
+    {
+     "map": "Ancient",
+     "note": "",
+     "number": 3,
+     "scores": [
+      16,
+      19
+     ]
+    }
+   ],
+   "right": "Spirit",
+   "score": [
+    1,
+    2
+   ],
+   "source_id": "cs2-match-2396006",
+   "start": "2026-07-23T18:05:00+00:00",
+   "status": "completed",
+   "tournament": "BLAST Bounty 2026 Season 2"
+  },
+  {
+   "bestof": 3,
+   "data_note": "",
+   "duration_hours": 2.5,
+   "finished": true,
+   "key": "1948a152c883eb06",
+   "left": "100 Thieves",
+   "maps": [
+    {
+     "map": "Anubis",
+     "note": "",
+     "number": 1,
+     "scores": [
+      11,
+      13
+     ]
+    },
+    {
+     "map": "Mirage",
+     "note": "",
+     "number": 2,
+     "scores": [
+      13,
+      4
+     ]
+    },
+    {
+     "map": "Dust2",
+     "note": "",
+     "number": 3,
+     "scores": [
+      0,
+      13
+     ]
+    }
+   ],
+   "right": "Spirit",
+   "score": [
+    1,
+    2
+   ],
+   "source_id": "cs2-match-2396014",
+   "start": "2026-07-26T16:35:00+00:00",
+   "status": "completed",
+   "tournament": "BLAST Bounty 2026 Season 2"
+  },
+  {
+   "bestof": 3,
+   "data_note": "",
+   "duration_hours": 2.5,
+   "finished": true,
+   "key": "b485b89f78b72021",
+   "left": "Liquid",
+   "maps": [
+    {
+     "map": "Dust2",
+     "note": "",
+     "number": 1,
+     "scores": [
+      7,
+      13
+     ]
+    },
+    {
+     "map": "Anubis",
+     "note": "",
+     "number": 2,
+     "scores": [
+      5,
+      13
+     ]
+    }
+   ],
+   "right": "Spirit",
+   "score": [
+    0,
+    2
+   ],
+   "source_id": "cs2-match-2396018",
+   "start": "2026-07-30T13:00:00+00:00",
+   "status": "completed",
+   "tournament": "BLAST Bounty 2026 Season 2 Finals"
+  },
+  {
+   "bestof": 3,
+   "data_note": "",
+   "duration_hours": 2.5,
+   "finished": true,
+   "key": "4902f05bc3bf3490",
+   "left": "FaZe",
+   "maps": [
+    {
+     "map": "Dust2",
+     "note": "",
+     "number": 1,
+     "scores": [
+      6,
+      13
+     ]
+    },
+    {
+     "map": "Cache",
+     "note": "",
+     "number": 2,
+     "scores": [
+      13,
+      9
+     ]
+    },
+    {
+     "map": "Anubis",
+     "note": "",
+     "number": 3,
+     "scores": [
+      11,
+      13
+     ]
+    }
+   ],
+   "right": "Spirit",
+   "score": [
+    1,
+    2
+   ],
+   "source_id": "cs2-match-2396020",
+   "start": "2026-08-01T10:30:00+00:00",
+   "status": "completed",
+   "tournament": "BLAST Bounty 2026 Season 2 Finals"
+  },
+  {
+   "bestof": 5,
+   "data_note": "",
+   "duration_hours": 4.0,
+   "finished": true,
+   "key": "bc8cf326fd1546a4",
+   "left": "Spirit",
+   "maps": [
+    {
+     "map": "Dust2",
+     "note": "",
+     "number": 1,
+     "scores": [
+      8,
+      13
+     ]
+    },
+    {
+     "map": "Mirage",
+     "note": "",
+     "number": 2,
+     "scores": [
+      4,
+      13
+     ]
+    },
+    {
+     "map": "Ancient",
+     "note": "",
+     "number": 3,
+     "scores": [
+      13,
+      9
+     ]
+    },
+    {
+     "map": "Nuke",
+     "note": "",
+     "number": 4,
+     "scores": [
+      10,
+      13
+     ]
+    }
+   ],
+   "right": "MOUZ",
+   "score": [
+    1,
+    3
+   ],
+   "source_id": "cs2-match-2396021",
+   "start": "2026-08-02T10:30:00+00:00",
+   "status": "completed",
+   "tournament": "BLAST Bounty 2026 Season 2 Finals"
+  },
+  {
+   "bestof": 1,
+   "data_note": "",
+   "duration_hours": 1.0,
+   "finished": true,
+   "key": "fe102caa1b4534c5",
+   "left": "Spirit",
+   "maps": [
+    {
+     "map": "Mirage",
+     "note": "",
+     "number": 1,
+     "scores": [
+      10,
+      13
+     ]
+    }
+   ],
+   "right": "JiJieHao",
+   "score": [
+    0,
+    1
+   ],
+   "source_id": "cs2-match-2396559",
+   "start": "2026-08-12T11:23:54+00:00",
+   "status": "completed",
+   "tournament": "Esports World Cup 2026"
+  },
+  {
+   "bestof": 3,
+   "data_note": "结果未更新（已过开赛时间 12 小时以上，可能延期或取消）",
+   "duration_hours": 2.5,
+   "finished": false,
+   "key": "b5b7bdfd054dd800",
+   "left": "Luminosity",
+   "maps": [],
+   "right": "Spirit",
+   "score": null,
+   "source_id": "cs2-match-2396577",
+   "start": "2026-08-13T11:00:00+00:00",
+   "status": "unresolved",
+   "tournament": "Esports World Cup 2026"
+  },
+  {
+   "bestof": null,
+   "data_note": "结果未更新（已过开赛时间 12 小时以上，可能延期或取消）",
+   "duration_hours": 2.0,
+   "finished": false,
+   "key": "588ea193607533b5",
+   "left": "B8",
+   "maps": [],
+   "right": "Spirit",
+   "score": null,
+   "source_id": "cs2-match-2396606",
+   "start": "2026-08-20T13:55:00+00:00",
+   "status": "unresolved",
+   "tournament": "未知赛事"
+  },
+  {
+   "bestof": 3,
+   "data_note": "",
+   "duration_hours": 2.5,
+   "finished": true,
+   "key": "bcacca31c40d3131",
+   "left": "Spirit",
+   "maps": [
+    {
+     "map": "Ancient",
+     "note": "",
+     "number": 1,
+     "scores": [
+      13,
+      8
+     ]
+    },
+    {
+     "map": "Cache",
+     "note": "",
+     "number": 2,
+     "scores": [
+      13,
+      7
+     ]
+    }
+   ],
+   "right": "DENDELE",
+   "score": [
+    2,
+    0
+   ],
+   "source_id": "cs2-match-2396924",
+   "start": "2026-08-26T11:55:00+00:00",
+   "status": "completed",
+   "tournament": "BLAST Open Porto 2026"
+  },
+  {
+   "bestof": 3,
+   "data_note": "",
+   "duration_hours": 2.5,
+   "finished": true,
+   "key": "c12b58c6ba413b60",
+   "left": "G2",
+   "maps": [
+    {
+     "map": "Dust2",
+     "note": "",
+     "number": 1,
+     "scores": [
+      6,
+      13
+     ]
+    },
+    {
+     "map": "Cache",
+     "note": "",
+     "number": 2,
+     "scores": [
+      9,
+      13
+     ]
+    }
+   ],
+   "right": "Spirit",
+   "score": [
+    0,
+    2
+   ],
+   "source_id": "cs2-match-2396932",
+   "start": "2026-08-28T11:50:00+00:00",
+   "status": "completed",
+   "tournament": "BLAST Open Porto 2026"
+  },
+  {
+   "bestof": 3,
+   "data_note": "",
+   "duration_hours": 2.5,
+   "finished": true,
+   "key": "d7e4b4eacb804f5a",
+   "left": "Spirit",
+   "maps": [
+    {
+     "map": "Ancient",
+     "note": "",
+     "number": 1,
+     "scores": [
+      13,
+      10
+     ]
+    },
+    {
+     "map": "Cache",
+     "note": "",
+     "number": 2,
+     "scores": [
+      13,
+      5
+     ]
+    }
+   ],
+   "right": "FURIA",
+   "score": [
+    2,
+    0
+   ],
+   "source_id": "cs2-match-2396943",
+   "start": "2026-08-31T09:00:00+00:00",
+   "status": "completed",
+   "tournament": "BLAST Open Porto 2026"
+  },
+  {
+   "bestof": 3,
+   "data_note": "",
+   "duration_hours": 2.5,
+   "finished": true,
+   "key": "8f13c2905a149cd2",
+   "left": "Spirit",
+   "maps": [
+    {
+     "map": "Nuke",
+     "note": "",
+     "number": 1,
+     "scores": [
+      13,
+      8
+     ]
+    },
+    {
+     "map": "Ancient",
+     "note": "",
+     "number": 2,
+     "scores": [
+      13,
+      11
+     ]
+    }
+   ],
+   "right": "Falcons",
+   "score": [
+    2,
+    0
+   ],
+   "source_id": "cs2-match-2396949",
+   "start": "2026-09-05T14:00:00+00:00",
+   "status": "completed",
+   "tournament": "BLAST Open Porto 2026"
+  },
+  {
+   "bestof": 5,
+   "data_note": "",
+   "duration_hours": 4.0,
+   "finished": true,
+   "key": "906036cb92d18b9c",
+   "left": "Spirit",
+   "maps": [
+    {
+     "map": "Dust2",
+     "note": "",
+     "number": 1,
+     "scores": [
+      13,
+      8
+     ]
+    },
+    {
+     "map": "Mirage",
+     "note": "",
+     "number": 2,
+     "scores": [
+      11,
+      13
+     ]
+    },
+    {
+     "map": "Ancient",
+     "note": "",
+     "number": 3,
+     "scores": [
+      13,
+      3
+     ]
+    },
+    {
+     "map": "Nuke",
+     "note": "",
+     "number": 4,
+     "scores": [
+      13,
+      6
+     ]
+    }
+   ],
+   "right": "MOUZ",
+   "score": [
+    3,
+    1
+   ],
+   "source_id": "cs2-match-2396951",
+   "start": "2026-09-06T14:00:00+00:00",
+   "status": "completed",
+   "tournament": "BLAST Open Porto 2026"
+  },
+  {
+   "bestof": 3,
+   "data_note": "",
+   "duration_hours": 2.5,
+   "finished": true,
+   "key": "2100e4244bce5b60",
+   "left": "Spirit",
+   "maps": [
+    {
+     "map": "Dust2",
+     "note": "",
+     "number": 1,
+     "scores": [
+      11,
+      13
+     ]
+    },
+    {
+     "map": "Nuke",
+     "note": "",
+     "number": 2,
+     "scores": [
+      13,
+      11
+     ]
+    },
+    {
+     "map": "Mirage",
+     "note": "",
+     "number": 3,
+     "scores": [
+      13,
+      4
+     ]
+    }
+   ],
+   "right": "ShindeN",
+   "score": [
+    2,
+    1
+   ],
+   "source_id": "cs2-match-2398720",
+   "start": "2026-10-03T12:05:00+00:00",
+   "status": "completed",
+   "tournament": "ESL Pro League Season 24"
+  },
+  {
+   "bestof": 3,
+   "data_note": "",
+   "duration_hours": 2.5,
+   "finished": true,
+   "key": "7bf9439390d1b034",
+   "left": "Spirit",
+   "maps": [
+    {
+     "map": "Ancient",
+     "note": "",
+     "number": 1,
+     "scores": [
+      11,
+      13
+     ]
+    },
+    {
+     "map": "Dust2",
+     "note": "",
+     "number": 2,
+     "scores": [
+      13,
+      6
+     ]
+    },
+    {
+     "map": "Anubis",
+     "note": "",
+     "number": 3,
+     "scores": [
+      13,
+      5
+     ]
+    }
+   ],
+   "right": "PARIVISION",
+   "score": [
+    2,
+    1
+   ],
+   "source_id": "cs2-match-2398725",
+   "start": "2026-10-04T09:00:00+00:00",
+   "status": "completed",
+   "tournament": "ESL Pro League Season 24"
+  },
+  {
+   "bestof": 3,
+   "data_note": "",
+   "duration_hours": 2.5,
+   "finished": true,
+   "key": "f07a1fc72d0e569e",
+   "left": "Spirit",
+   "maps": [
+    {
+     "map": "Dust2",
+     "note": "",
+     "number": 1,
+     "scores": [
+      5,
+      13
+     ]
+    },
+    {
+     "map": "Mirage",
+     "note": "",
+     "number": 2,
+     "scores": [
+      11,
+      13
+     ]
+    }
+   ],
+   "right": "MOUZ",
+   "score": [
+    0,
+    2
+   ],
+   "source_id": "cs2-match-2398737",
+   "start": "2026-10-05T14:25:00+00:00",
+   "status": "completed",
+   "tournament": "ESL Pro League Season 24"
+  },
+  {
+   "bestof": 3,
+   "data_note": "",
+   "duration_hours": 2.5,
+   "finished": true,
+   "key": "b7e311c9f4688819",
+   "left": "Spirit",
+   "maps": [
+    {
+     "map": "Cache",
+     "note": "",
+     "number": 1,
+     "scores": [
+      5,
+      13
+     ]
+    },
+    {
+     "map": "Anubis",
+     "note": "",
+     "number": 2,
+     "scores": [
+      9,
+      13
+     ]
+    }
+   ],
+   "right": "1win",
+   "score": [
+    0,
+    2
+   ],
+   "source_id": "cs2-match-2398742",
+   "start": "2026-10-06T12:00:00+00:00",
+   "status": "completed",
+   "tournament": "ESL Pro League Season 24"
+  },
+  {
+   "bestof": 3,
+   "data_note": "",
+   "duration_hours": 2.5,
+   "finished": false,
+   "key": "c430413a9395e628",
+   "left": "Spirit",
+   "maps": [],
+   "right": "M80",
+   "score": null,
+   "source_id": "cs2-match-2398749",
+   "start": "2026-10-07T17:00:00+00:00",
+   "status": "upcoming",
+   "tournament": "ESL Pro League Season 24"
+  }
+ ],
+ "team": "Team Spirit",
+ "year": 2026
+}
