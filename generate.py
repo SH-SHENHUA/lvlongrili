@@ -10,6 +10,7 @@ import os
 import re
 import sys
 import time
+from collections import Counter
 from datetime import datetime, timedelta, timezone
 
 import requests
@@ -134,10 +135,34 @@ def _side_names(record: dict) -> tuple[str, str]:
     return name("team1", "team1Name"), name("team2", "team2Name")
 
 
-def _maps_team(record: dict) -> bool:
+def _detect_team_names(records: list) -> set:
+    """从返回数据里自识别本队名称。
+
+    接口是按队伍（/cs2/teams/{slug}/matches）查的，所以出现次数最多的队名就是本队。
+    这样就不必依赖配置里的名字和接口的显示名完全一致 —— 例如接口把 Team Spirit
+    叫 "Spirit"，若按配置的 "Team Spirit" 去匹配会把所有比赛都当成非本队丢光。
+    """
+    counts = Counter()
+    for record in records:
+        left, right = _side_names(record)
+        for name in (left, right):
+            if name:
+                counts[name] += 1
+    if not counts:
+        return set()
+    top = counts.most_common(1)[0][1]
+    if top < 2:
+        return set()
+    # 该端点是按队伍查的，本队会出现在**每一场**里，所以取出现次数最多的那个名字
+    # （并列时都取，避免同分歧义）。
+    return {name for name, count in counts.items() if count == top}
+
+
+def _maps_team(record: dict, accepted_names: set | None = None) -> bool:
     left, right = _side_names(record)
     names = f"{left} {right}".lower()
-    if TEAM_NAME.lower() in names:
+    accepted = {TEAM_NAME.lower()} | {n.lower() for n in (accepted_names or set())}
+    if any(name and name in names for name in accepted):
         return True
     # 兜底：slug 形如 team-spirit / spirit
     return TEAM_SLUG.replace("-", " ").lower() in names
@@ -216,11 +241,21 @@ def collect_events() -> tuple[list, str]:
     records = fetch_matches()
     print(f"[cito] 列表共取到 {len(records)} 条")
 
+    accepted_names = _detect_team_names(records)
+    if accepted_names:
+        print(f"[cito] 自识别本队名称：{'、'.join(sorted(accepted_names))}"
+              f"（配置里的 TEAM_NAME={TEAM_NAME}）")
+        if TEAM_NAME.lower() not in {n.lower() for n in accepted_names}:
+            print(f"[cito] 提示：接口用的队名与 TEAM_NAME 不一致，已按接口的队名过滤；"
+                  f"这只影响日历显示名（当前为 {CALENDAR_NAME}）。")
+    else:
+        print("[cito] 未能自识别队名，将按配置的 TEAM_NAME / slug 过滤")
+
     events, skipped_team, skipped_year, skipped_time, duplicates = [], 0, 0, 0, 0
     missing_time = []
     seen = set()
     for record in records:
-        if not _maps_team(record):
+        if not _maps_team(record, accepted_names):
             skipped_team += 1
             continue
         start = _parse_dt(record.get("startsAt") or record.get("startTime"))
@@ -245,12 +280,11 @@ def collect_events() -> tuple[list, str]:
         events.append(event)
 
     if not events:
-        raise SystemExit(
-            f"错误：没有取到 {TEAM_NAME} 在 {YEAR} 年的任何比赛，拒绝写出空日历。\n"
-            f"原始记录 {len(records)} 条（非本队 {skipped_team}、年份不符 {skipped_year}、"
-            f"缺少开赛时间 {skipped_time}、重复 {duplicates}）。"
-            f"请检查 key / 队名 slug / 年份配置。"
-        )
+        # 不在这里直接失败：可能是休赛期，或者数据源只给最近 30 天而这段时间没有比赛。
+        # 交给 main() 与缓存合并后再判断，避免把已有的日历弄丢。
+        print(f"[cito] 警告：本次没有取到 {TEAM_NAME} 在 {YEAR} 年的比赛"
+              f"（原始记录 {len(records)} 条：非本队 {skipped_team}、年份不符 {skipped_year}、"
+              f"缺少开赛时间 {skipped_time}、重复 {duplicates}）。将尝试使用缓存。")
 
     events.sort(key=lambda e: e["start"])
     finished_count = sum(1 for e in events if e["finished"])
@@ -477,6 +511,13 @@ def main():
     if kept_from_cache:
         print(f"[cache] 本次接口未返回、但缓存保留的比赛：{kept_from_cache} 场")
     print(f"[cache] 合并后共 {len(events)} 场（已结束 {sum(1 for e in events if e['finished'])} 场）")
+
+    if not events:
+        raise SystemExit(
+            f"错误：接口与缓存都没有 {TEAM_NAME} 在 {YEAR} 年的比赛，拒绝写出空日历。\n"
+            f"请检查 CITO_API_KEY / TEAM_SLUG / YEAR 配置是否正确。"
+        )
+
     save_cache({event["key"]: event for event in events})
 
     stamp = utc_stamp(_now_utc())

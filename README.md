@@ -85,6 +85,10 @@ Cito 各档的**历史深度**不同（见[定价页](https://cs2-api.org/pricin
 因此即使数据源只给最近 30 天，随着每天运行，日历会自动积累；
 若哪天升级到有全量历史的档位或换成有全量历史的来源，早期比赛也能补齐。
 
+**休赛期也安全**：如果某次运行接口一条比赛都没返回（休赛期、或窗口内确实没有比赛），
+脚本不会失败退出，而是用缓存里的比赛继续生成日历；
+只有「接口和缓存都没有比赛」时才会明确报错，拒绝写出空日历。
+
 ### 申请 key（免费）
 
 1. 打开 **https://citoapi.com/signup?game=cs2**，用邮箱注册（500 次/月，10 次/分钟，无需信用卡）
@@ -96,8 +100,8 @@ Cito 各档的**历史深度**不同（见[定价页](https://cs2-api.org/pricin
 | 变量 | 默认 | 说明 |
 | --- | --- | --- |
 | `CITO_API_KEY` | 无（**必填**） | API key |
-| `TEAM_SLUG` | `spirit` | 队伍 slug（如 `vitality`、`natus-vincere`），也接受 id |
-| `TEAM_NAME` | `Team Spirit` | 队名，用于识别「哪些比赛是本队的」并写入日历名 |
+| `TEAM_SLUG` | `spirit` | 队伍 slug（如 `vitality`、`natus-vincere`），也接受 id。**这是取数据用的关键配置** |
+| `TEAM_NAME` | `Team Spirit` | 仅用于**日历显示名**与过滤兜底。脚本会从接口返回数据里自识别本队名（例如接口把 Team Spirit 叫 `Spirit`），因此两者不一致也不会丢比赛 |
 | `YEAR` | `2026` | 只取该自然年的比赛 |
 | `REQUEST_DELAY` | `0.5` | 请求间隔秒数 |
 | `OUTPUT_FILE` | `matches.ics` | 输出文件名 |
