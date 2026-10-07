@@ -61,11 +61,13 @@ def main():
 
     finished = upcoming = 0
     missing_maps = []
+    missing_location = []
     for index, event in enumerate(events, 1):
         summary = event.get("SUMMARY", "")
         description = event.get("DESCRIPTION", "").replace("\\n", "\n")
         uid = event.get("UID", "")
         label = f"第 {index} 个事件（{uid or '无 UID'}）"
+        lines = [line for line in description.split("\n") if line.strip()]
 
         for prop in ("UID", "DTSTART", "DTEND", "SUMMARY", "DESCRIPTION"):
             if prop not in event:
@@ -74,31 +76,55 @@ def main():
         if not uid.endswith("@lvlongrili"):
             fail(f"{label} 的 UID 不是稳定的日历 ID（应以 @lvlongrili 结尾）：{uid!r}")
 
-        if "比赛：" not in description:
-            fail(f"{label} 的备注没有比赛名称：{summary!r}")
+        # 备注第一行必须是赛事名称（不能是「比分：/赛制：/地图比分：/比赛ID：」这类标签行）
+        first = lines[0] if lines else ""
+        if not first:
+            fail(f"{label} 的备注为空")
+        elif first.startswith(("比分：", "赛制：", "地图比分：", "比赛ID：")):
+            fail(f"{label} 的备注第一行不是赛事名称：{first!r}")
         if "比赛ID：" not in description:
             fail(f"{label} 的备注没有比赛 ID：{summary!r}")
 
+        # 地点（比赛举办城市）：有就必须非空
+        location = event.get("LOCATION")
+        if location is not None and not str(location).strip():
+            fail(f"{label} 的 LOCATION 为空")
+
+        score_line = next((line for line in lines if line.startswith("比分：")), None)
+        title_score = SCORE_PATTERN.search(summary)
         is_finished = "地图比分" in description
+
         if is_finished:
             finished += 1
-            if not SCORE_PATTERN.search(summary):
+            if not title_score:
                 fail(f"{label} 是已结束比赛，标题里却没有「比分」：{summary!r}")
             if " VS " in summary:
                 fail(f"{label} 是已结束比赛，标题却仍是 VS 形式：{summary!r}")
+            if not score_line:
+                fail(f"{label} 是已结束比赛，备注里缺少「比分：」行：{summary!r}")
+            elif title_score and score_line.strip() != f"比分：{title_score.group(0).strip()}":
+                fail(f"{label} 备注里的比分与标题不一致：{score_line!r} vs {summary!r}")
             if "地图比分：数据缺失" in description:
                 missing_maps.append(summary)
+            if location is None:
+                missing_location.append(summary)
         else:
             upcoming += 1
             if " VS " not in summary:
                 fail(f"{label} 是未进行比赛，标题却不是「队伍A VS 队伍B」：{summary!r}")
             if SCORE_PATTERN.search(summary):
                 fail(f"{label} 是未进行比赛，标题里却带了比分：{summary!r}")
+            if score_line:
+                fail(f"{label} 是未进行比赛，备注里不应有「比分：」行：{score_line!r}")
 
     print(f"{PATH} 内容检查：共 {len(events)} 场（已结束 {finished}、未进行 {upcoming}）")
     if missing_maps:
         warn(f"有 {len(missing_maps)} 场已结束比赛没有逐地图比分（数据源缺数据），例如：")
         for summary in missing_maps[:5]:
+            warn(f"    {summary}")
+    if missing_location:
+        warn(f"有 {len(missing_location)} 场比赛没有地点信息（数据源未给举办城市），例如：")
+        for summary in missing_location[:5]:
             warn(f"    {summary}")
 
 

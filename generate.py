@@ -44,7 +44,11 @@ TEAM_ALIASES = [item.strip() for item in (os.environ.get("TEAM_ALIASES") or "").
 YEAR = int(os.environ.get("YEAR") or 2026)
 PAGE_SIZE = 250
 MAX_PAGES = 4
-REQUEST_DELAY_SECONDS = float(os.environ.get("REQUEST_DELAY") or 0.5)
+# Cito 免费档限流为 10 次/分钟，因此默认每次请求间隔 6.5 秒（每日任务总共十几次请求，
+# 完全可以接受）；可用 REQUEST_DELAY 覆盖。
+REQUEST_DELAY_SECONDS = float(os.environ.get("REQUEST_DELAY") or 6.5)
+# 被限流（429）时默认等待的秒数（若响应带 Retry-After 则以其为准）
+RATE_LIMIT_WAIT = float(os.environ.get("RATE_LIMIT_WAIT") or 20)
 
 OUTPUT_FILE = (os.environ.get("OUTPUT_FILE") or "matches.ics").strip()
 # 累积缓存：把见过的比赛存下来。数据源的历史窗口（例如免费档只有 30 天）会让旧比赛
@@ -134,7 +138,7 @@ def score_is_sane(left, right) -> bool:
 
 # ---------- 数据源：Cito CS2 ----------
 
-def _api_get(path: str, params: dict | None = None):
+def _api_get(path: str, params: dict | None = None, retries: int = 3):
     if not API_KEY:
         raise SystemExit(
             "错误：缺少 CITO_API_KEY。\n"
@@ -142,14 +146,29 @@ def _api_get(path: str, params: dict | None = None):
             "然后在本机设为环境变量，或在仓库 Settings → Secrets 里加同名 Secret。"
         )
     headers = {"x-api-key": API_KEY, "Accept": "application/json"}
-    resp = requests.get(f"{API_BASE}{path}", headers=headers, params=params or {}, timeout=40)
+    url = f"{API_BASE}{path}"
+    resp = None
+    for attempt in range(1, retries + 1):
+        resp = requests.get(url, headers=headers, params=params or {}, timeout=40)
+        if resp.status_code == 429:
+            wait = _as_int(resp.headers.get("Retry-After")) or RATE_LIMIT_WAIT
+            print(f"[cito] 触到限流（免费档 10 次/分钟），等待 {wait:.0f} 秒后重试"
+                  f"（第 {attempt}/{retries} 次）")
+            time.sleep(wait)
+            continue
+        break
+    if resp is None:
+        raise SystemExit("错误：请求 Cito 失败（未收到响应）")
     if resp.status_code in (401, 403):
         raise SystemExit(
             f"错误：Cito 拒绝了请求（HTTP {resp.status_code}）。请检查 CITO_API_KEY 是否有效"
             f"（头部应为 x-api-key）。"
         )
     if resp.status_code == 429:
-        raise SystemExit("错误：Cito 返回 429（超出免费额度 500 次/月 或 10 次/分钟），请稍后再试。")
+        raise SystemExit(
+            "错误：Cito 持续返回 429（免费档 10 次/分钟、500 次/月）。"
+            "请稍后重试，或调大 REQUEST_DELAY。"
+        )
     resp.raise_for_status()
     time.sleep(REQUEST_DELAY_SECONDS)
     payload = resp.json()
@@ -293,7 +312,56 @@ def _map_rows(record: dict) -> list:
     return rows
 
 
-def normalize(record: dict) -> dict | None:
+def _event_id_of(record: dict) -> str:
+    event = record.get("event")
+    if isinstance(event, dict) and event.get("id"):
+        return str(event["id"])
+    return str(record.get("eventId") or "")
+
+
+def event_locations(records: list, cached: dict | None = None) -> dict:
+    """按赛事取「举办城市／地点」，并写入缓存（位置几乎不变，不必每天重查）。
+
+    列表接口不返回位置，需要 GET /cs2/events/{id}；2026 年该队只有十几个赛事，
+    首次运行补齐后，之后每天通常只需查询新增赛事（免费档限 10 次/分钟）。
+    """
+    locations = cached if cached is not None else {}
+    event_ids = []
+    for record in records:
+        # 只查「会进入日历的那些比赛」所属的赛事：接口返回的是队伍全量历史（含往年），
+        # 若不过滤年份，会为多年前的赛事也去查询，白白浪费免费额度与时间。
+        start = _parse_dt(record.get("startsAt") or record.get("startTime"))
+        if start is None or start.year != YEAR:
+            continue
+        event_id = _event_id_of(record)
+        if event_id and event_id not in event_ids:
+            event_ids.append(event_id)
+    missing = [event_id for event_id in event_ids if event_id not in locations]
+    if missing:
+        print(f"[cito] 需查询 {len(missing)} 个赛事的位置（已缓存 {len(locations)} 个）")
+    for event_id in missing:
+        try:
+            payload = _api_get(f"/cs2/events/{event_id}")
+        except requests.HTTPError as exc:
+            status = exc.response.status_code if exc.response is not None else "?"
+            print(f"[cito] 赛事 {event_id} 位置查询失败（HTTP {status}），该场将不显示地点")
+            continue
+        data = payload.get("data") if isinstance(payload, dict) else payload
+        if isinstance(data, dict):
+            locations[event_id] = {
+                "name": str(data.get("name") or ""),
+                "location": str(data.get("location") or "").strip(),
+                "isLan": data.get("isLan"),
+            }
+    return locations
+
+
+def _location_for(record: dict, locations: dict) -> str:
+    info = locations.get(_event_id_of(record)) or {}
+    return str(info.get("location") or "").strip()
+
+
+def normalize(record: dict, location: str = "") -> dict | None:
     start = _parse_dt(record.get("startsAt") or record.get("startTime"))
     if start is None or start.year != YEAR:
         return None
@@ -340,16 +408,18 @@ def normalize(record: dict) -> dict | None:
         "finished": finished,
         "bestof": bestof,
         "tournament": title,
+        "location": location,
         "maps": _map_rows(record) if finished else [],
         "status": status,
         "data_note": "；".join(notes),
     }
 
 
-def _collect_cito() -> tuple[list, str]:
+def _collect_cito(cached_locations: dict | None = None) -> tuple[list, str]:
     resolve_team()
     records = fetch_matches()
     print(f"[cito] 列表共取到 {len(records)} 条")
+    locations = event_locations(records, cached_locations)
 
     accepted_names = _detect_team_names(records)
     if accepted_names:
@@ -379,7 +449,7 @@ def _collect_cito() -> tuple[list, str]:
         if start.year != YEAR:
             skipped_year += 1
             continue
-        event = normalize(record)
+        event = normalize(record, location=_location_for(record, locations))
         if event is None:
             skipped_year += 1
             continue
@@ -532,6 +602,7 @@ def _lp_normalize(record: dict) -> dict | None:
         "finished": finished,
         "bestof": bestof,
         "tournament": title,
+        "location": str(record.get("location") or record.get("venue") or "").strip(),
         "maps": _lp_games(record) if finished else [],
         "status": str(record.get("status") or ("finished" if finished else "upcoming")),
         "data_note": data_note,
@@ -619,13 +690,15 @@ def _lp_team_in(record: dict) -> bool:
 SOURCES = {"cito": _collect_cito, "liquipedia": _collect_liquipedia}
 
 
-def collect_events() -> tuple[list, str]:
+def collect_events(cached_locations: dict | None = None) -> tuple[list, str]:
     collector = SOURCES.get(SOURCE.lower())
     if collector is None:
         raise SystemExit(
             f"错误：未知的数据源 SOURCE={SOURCE!r}，可选：{'、'.join(sorted(SOURCES))}"
         )
     print(f"[源] 使用数据源：{SOURCE}")
+    if collector is _collect_cito:
+        return collector(cached_locations)
     return collector()
 
 
@@ -669,8 +742,10 @@ def _now_utc() -> datetime:
 
 
 def build_description(event: dict) -> str:
-    """备注：比赛名称（必显）；已结束的比赛逐张列出地图比分。"""
-    lines = [f"比赛：{event['tournament'] or '未知赛事'}"]
+    """备注：第一行是赛事名称，紧跟系列赛比分，然后赛制与逐张地图比分。"""
+    lines = [event["tournament"] or "未知赛事"]
+    if event["finished"] and event["score"]:
+        lines.append(f"比分：{event['score'][0]}-{event['score'][1]}")
     if event["bestof"]:
         lines.append(f"赛制：BO{event['bestof']}")
     if event.get("data_note"):
@@ -703,18 +778,24 @@ def build_event(event: dict, stamp: str) -> list:
         summary = f"{event['left']} VS {event['right']}"
     summary = re.sub(r"\s+", " ", summary).strip()
 
-    return [
+    lines = [
         "BEGIN:VEVENT",
         f"UID:{event['key']}@lvlongrili",
         f"DTSTAMP:{stamp}",
         f"DTSTART:{utc_stamp(start)}",
         f"DTEND:{utc_stamp(end)}",
         f"SUMMARY:{escape_text(summary)}",
+    ]
+    location = str(event.get("location") or "").strip()
+    if location:
+        lines.append(f"LOCATION:{escape_text(location)}")
+    lines.extend([
         f"DESCRIPTION:{escape_text(build_description(event))}",
         "STATUS:CONFIRMED",
         "TRANSP:OPAQUE",
         "END:VEVENT",
-    ]
+    ])
+    return lines
 
 
 def build_calendar(events: list, stamp: str, calendar_note: str = "") -> str:
@@ -757,6 +838,7 @@ def _event_to_json(event: dict) -> dict:
         "finished": event["finished"],
         "bestof": event["bestof"],
         "tournament": event["tournament"],
+        "location": event.get("location", ""),
         "maps": event["maps"],
         "status": event["status"],
         "data_note": event.get("data_note", ""),
@@ -784,34 +866,44 @@ def _event_from_json(data: dict) -> dict | None:
         "finished": bool(data.get("finished")),
         "bestof": _as_int(data.get("bestof")),
         "tournament": str(data.get("tournament") or ""),
+        "location": str(data.get("location") or ""),
         "maps": data.get("maps") or [],
         "status": str(data.get("status") or ""),
         "data_note": str(data.get("data_note") or ""),
     }
 
 
-def load_cache() -> dict:
+def load_cache() -> tuple[dict, dict]:
+    """返回 (比赛缓存, 赛事位置缓存)。"""
     if not os.path.exists(CACHE_FILE):
-        return {}
+        return {}, {}
     try:
         with open(CACHE_FILE, encoding="utf-8") as fh:
             payload = json.load(fh)
     except (OSError, ValueError) as exc:
         print(f"[cache] 读取 {CACHE_FILE} 失败，将忽略：{exc}")
-        return {}
+        return {}, {}
     raw = payload.get("matches") if isinstance(payload, dict) else payload
     cache = {}
     for item in raw or []:
         event = _event_from_json(item)
         if event:
             cache[event["key"]] = event
-    print(f"[cache] 已有 {len(cache)} 场历史记录")
-    return cache
+    locations = payload.get("event_locations") if isinstance(payload, dict) else {}
+    locations = locations if isinstance(locations, dict) else {}
+    print(f"[cache] 已有 {len(cache)} 场历史记录、{len(locations)} 个赛事位置")
+    return cache, locations
 
 
-def save_cache(cache: dict) -> None:
+def save_cache(cache: dict, locations: dict | None = None) -> None:
     items = [_event_to_json(event) for event in sorted(cache.values(), key=lambda e: e["start"])]
-    payload = {"team": TEAM_NAME, "year": YEAR, "count": len(items), "matches": items}
+    payload = {
+        "team": TEAM_NAME,
+        "year": YEAR,
+        "count": len(items),
+        "event_locations": locations or {},
+        "matches": items,
+    }
     with open(CACHE_FILE, "w", encoding="utf-8") as fh:
         json.dump(payload, fh, ensure_ascii=False, indent=1, sort_keys=True)
         fh.write("\n")
@@ -833,9 +925,9 @@ def merge_with_cache(events: list, cache: dict) -> tuple[list, int]:
 
 
 def main():
-    events, calendar_note = collect_events()
+    cache, locations = load_cache()
+    events, calendar_note = collect_events(locations)
 
-    cache = load_cache()
     events, kept_from_cache = merge_with_cache(events, cache)
     if kept_from_cache:
         print(f"[cache] 本次接口未返回、但缓存保留的比赛：{kept_from_cache} 场")
@@ -847,7 +939,7 @@ def main():
             f"请检查 CITO_API_KEY / TEAM_SLUG / YEAR 配置是否正确。"
         )
 
-    save_cache({event["key"]: event for event in events})
+    save_cache({event["key"]: event for event in events}, locations)
 
     stamp = utc_stamp(_now_utc())
     ics = build_calendar(events, stamp, calendar_note)

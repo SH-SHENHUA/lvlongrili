@@ -1,5 +1,82 @@
 {
  "count": 55,
+ "event_locations": {
+  "cs2-event-8049": {
+   "isLan": true,
+   "location": "Astana, Kazakhstan",
+   "name": "PGL Astana 2026"
+  },
+  "cs2-event-8240": {
+   "isLan": true,
+   "location": "Kraków, Poland",
+   "name": "IEM Kraków 2026"
+  },
+  "cs2-event-8242": {
+   "isLan": true,
+   "location": "Rio de Janeiro, Brazil",
+   "name": "IEM Rio 2026"
+  },
+  "cs2-event-8244": {
+   "isLan": true,
+   "location": "Katowice, Poland",
+   "name": "ESL Pro League Season 24"
+  },
+  "cs2-event-8246": {
+   "isLan": true,
+   "location": "Malta",
+   "name": "BLAST Bounty 2026 Season 1 Finals"
+  },
+  "cs2-event-8247": {
+   "isLan": true,
+   "location": "Malta",
+   "name": "BLAST Bounty 2026 Season 2 Finals"
+  },
+  "cs2-event-8248": {
+   "isLan": true,
+   "location": "CPH, DK & Rotterdam, NL",
+   "name": "BLAST Open Rotterdam 2026"
+  },
+  "cs2-event-8249": {
+   "isLan": true,
+   "location": "CPH, DK & Porto, PT",
+   "name": "BLAST Open Porto 2026"
+  },
+  "cs2-event-8261": {
+   "isLan": true,
+   "location": "Paris, France",
+   "name": "Esports World Cup 2026"
+  },
+  "cs2-event-8301": {
+   "isLan": true,
+   "location": "Cologne, Germany",
+   "name": "IEM Cologne Major 2026"
+  },
+  "cs2-event-8412": {
+   "isLan": true,
+   "location": "Europe (Online)",
+   "name": "ESL Pro League Season 23 Stage 2"
+  },
+  "cs2-event-8413": {
+   "isLan": true,
+   "location": "Stockholm, Sweden",
+   "name": "ESL Pro League Season 23 Finals"
+  },
+  "cs2-event-8876": {
+   "isLan": true,
+   "location": "Europe (Online)",
+   "name": "BLAST Bounty 2026 Season 1"
+  },
+  "cs2-event-9029": {
+   "isLan": true,
+   "location": "Cologne, Germany",
+   "name": "IEM Cologne Major 2026 Stage 2"
+  },
+  "cs2-event-9154": {
+   "isLan": true,
+   "location": "Europe (Online)",
+   "name": "BLAST Bounty 2026 Season 2"
+  }
+ },
  "matches": [
   {
    "bestof": 3,
@@ -8,6 +85,7 @@
    "finished": true,
    "key": "6977dc31310382a7",
    "left": "SINNERS",
+   "location": "Europe (Online)",
    "maps": [
     {
      "map": "Mirage",
@@ -45,6 +123,7 @@
    "finished": true,
    "key": "c7993def20dbd579",
    "left": "Spirit",
+   "location": "Europe (Online)",
    "maps": [
     {
      "map": "Ancient",
@@ -82,6 +161,7 @@
    "finished": true,
    "key": "395a1710856d18aa",
    "left": "Spirit",
+   "location": "Malta",
    "maps": [
     {
      "map": "Overpass",
@@ -128,6 +208,7 @@
    "finished": true,
    "key": "5b68a7810a1e37eb",
    "left": "Spirit",
+   "location": "Kraków, Poland",
    "maps": [
     {
      "map": "Dust2",
@@ -165,6 +246,7 @@
    "finished": true,
    "key": "80cb1ffdedb0f809",
    "left": "Spirit",
+   "location": "Kraków, Poland",
    "maps": [
     {
      "map": "Mirage",
@@ -202,6 +284,7 @@
    "finished": true,
    "key": "6a83aebb0e925464",
    "left": "Spirit",
+   "location": "Kraków, Poland",
    "maps": [
     {
      "map": "Anubis",
@@ -248,6 +331,7 @@
    "finished": true,
    "key": "2458f29f24511067",
    "left": "Spirit",
+   "location": "Kraków, Poland",
    "maps": [
     {
      "map": "Mirage",
@@ -294,6 +378,7 @@
    "finished": true,
    "key": "7d73aab2e0eab133",
    "left": "Spirit",
+   "location": "Kraków, Poland",
    "maps": [
     {
      "map": "Dust2",
@@ -331,6 +416,7 @@
    "finished": true,
    "key": "d26a7e16b5a7f790",
    "left": "Spirit",
+   "location": "Europe (Online)",
    "maps": [
     {
      "map": "Nuke",
@@ -368,6 +454,7 @@
    "finished": true,
    "key": "73b9ded72386ab71",
    "left": "Spirit",
+   "location": "Europe (Online)",
    "maps": [
     {
      "map": "Mirage",
@@ -414,6 +501,7 @@
    "finished": true,
    "key": "4897789460e723ad",
    "left": "Spirit",
+   "location": "Europe (Online)",
    "maps": [
     {
      "map": "Ancient",
@@ -451,6 +539,7 @@
    "finished": true,
    "key": "36fb22c266647d48",
    "left": "Astralis",
+   "location": "Stockholm, Sweden",
    "maps": [
     {
      "map": "Dust2",
@@ -488,6 +577,7 @@
    "finished": true,
    "key": "666fbcbbf450e102",
    "left": "Spirit",
+   "location": "CPH, DK & Rotterdam, NL",
    "maps": [
     {
      "map": "Mirage",
@@ -525,6 +615,7 @@
    "finished": true,
    "key": "527386d2fc8eb952",
    "left": "PARIVISION",
+   "location": "CPH, DK & Rotterdam, NL",
    "maps": [
     {
      "map": "Anubis",
@@ -562,6 +653,7 @@
    "finished": true,
    "key": "7df331fb42d4fc92",
    "left": "9z",
+   "location": "CPH, DK & Rotterdam, NL",
    "maps": [
     {
      "map": "Overpass",
@@ -599,6 +691,7 @@
    "finished": true,
    "key": "bde3cae4718a7809",
    "left": "The MongolZ",
+   "location": "CPH, DK & Rotterdam, NL",
    "maps": [
     {
      "map": "Nuke",
@@ -636,6 +729,7 @@
    "finished": true,
    "key": "e14cefe1a53cb9e0",
    "left": "Spirit",
+   "location": "Rio de Janeiro, Brazil",
    "maps": [
     {
      "map": "Ancient",
@@ -673,6 +767,7 @@
    "finished": true,
    "key": "41bd115bd4a6b987",
    "left": "Spirit",
+   "location": "Rio de Janeiro, Brazil",
    "maps": [
     {
      "map": "Anubis",
@@ -710,6 +805,7 @@
    "finished": true,
    "key": "765a55cf46e0cf79",
    "left": "RED Canids",
+   "location": "Rio de Janeiro, Brazil",
    "maps": [
     {
      "map": "Mirage",
@@ -756,6 +852,7 @@
    "finished": true,
    "key": "6a2c173464ed9686",
    "left": "G2",
+   "location": "Rio de Janeiro, Brazil",
    "maps": [
     {
      "map": "Mirage",
@@ -793,6 +890,7 @@
    "finished": true,
    "key": "249d11d970930955",
    "left": "Spirit",
+   "location": "Rio de Janeiro, Brazil",
    "maps": [
     {
      "map": "Dust2",
@@ -830,6 +928,7 @@
    "finished": true,
    "key": "65226061f08f4061",
    "left": "Falcons",
+   "location": "Rio de Janeiro, Brazil",
    "maps": [
     {
      "map": "Dust2",
@@ -867,6 +966,7 @@
    "finished": true,
    "key": "355ef82a7c40a157",
    "left": "Spirit",
+   "location": "Rio de Janeiro, Brazil",
    "maps": [
     {
      "map": "Mirage",
@@ -913,6 +1013,7 @@
    "finished": true,
    "key": "6c112dc45901e47a",
    "left": "Spirit",
+   "location": "Astana, Kazakhstan",
    "maps": [
     {
      "map": "Dust2",
@@ -950,6 +1051,7 @@
    "finished": true,
    "key": "db9ba724a57886fb",
    "left": "The MongolZ",
+   "location": "Astana, Kazakhstan",
    "maps": [
     {
      "map": "Dust2",
@@ -987,6 +1089,7 @@
    "finished": true,
    "key": "602444b0ed8e59fc",
    "left": "FURIA",
+   "location": "Astana, Kazakhstan",
    "maps": [
     {
      "map": "Dust2",
@@ -1033,6 +1136,7 @@
    "finished": true,
    "key": "2025e1d4c90c55a6",
    "left": "Spirit",
+   "location": "Astana, Kazakhstan",
    "maps": [
     {
      "map": "Dust2",
@@ -1070,6 +1174,7 @@
    "finished": true,
    "key": "3797750634d93c5b",
    "left": "MOUZ",
+   "location": "Astana, Kazakhstan",
    "maps": [
     {
      "map": "Dust2",
@@ -1107,6 +1212,7 @@
    "finished": true,
    "key": "cca4374156a359d1",
    "left": "Spirit",
+   "location": "Astana, Kazakhstan",
    "maps": [
     {
      "map": "Dust2",
@@ -1153,6 +1259,7 @@
    "finished": true,
    "key": "9b459f519c3c67be",
    "left": "Spirit",
+   "location": "Cologne, Germany",
    "maps": [
     {
      "map": "Mirage",
@@ -1181,6 +1288,7 @@
    "finished": true,
    "key": "0c39fc5aa042c9a6",
    "left": "Spirit",
+   "location": "Cologne, Germany",
    "maps": [
     {
      "map": "Mirage",
@@ -1209,6 +1317,7 @@
    "finished": true,
    "key": "375fc0eedbe14c6d",
    "left": "Spirit",
+   "location": "Cologne, Germany",
    "maps": [
     {
      "map": "Mirage",
@@ -1246,6 +1355,7 @@
    "finished": true,
    "key": "dfe8f27c51b87117",
    "left": "Natus Vincere",
+   "location": "Cologne, Germany",
    "maps": [
     {
      "map": "Dust2",
@@ -1283,6 +1393,7 @@
    "finished": true,
    "key": "50e3bd414c14fc83",
    "left": "Aurora",
+   "location": "Cologne, Germany",
    "maps": [
     {
      "map": "Dust2",
@@ -1329,6 +1440,7 @@
    "finished": true,
    "key": "72a97ef99ac8b574",
    "left": "Spirit",
+   "location": "Cologne, Germany",
    "maps": [
     {
      "map": "Overpass",
@@ -1375,6 +1487,7 @@
    "finished": true,
    "key": "938eb5ca268f6f1b",
    "left": "G2",
+   "location": "Cologne, Germany",
    "maps": [
     {
      "map": "Overpass",
@@ -1421,6 +1534,7 @@
    "finished": true,
    "key": "ca43df1cbe154576",
    "left": "Spirit",
+   "location": "Cologne, Germany",
    "maps": [
     {
      "map": "Anubis",
@@ -1467,6 +1581,7 @@
    "finished": true,
    "key": "cad0c3aaff591c3a",
    "left": "OG",
+   "location": "Europe (Online)",
    "maps": [
     {
      "map": "Cache",
@@ -1513,6 +1628,7 @@
    "finished": true,
    "key": "1948a152c883eb06",
    "left": "100 Thieves",
+   "location": "Europe (Online)",
    "maps": [
     {
      "map": "Anubis",
@@ -1559,6 +1675,7 @@
    "finished": true,
    "key": "b485b89f78b72021",
    "left": "Liquid",
+   "location": "Malta",
    "maps": [
     {
      "map": "Dust2",
@@ -1596,6 +1713,7 @@
    "finished": true,
    "key": "4902f05bc3bf3490",
    "left": "FaZe",
+   "location": "Malta",
    "maps": [
     {
      "map": "Dust2",
@@ -1642,6 +1760,7 @@
    "finished": true,
    "key": "bc8cf326fd1546a4",
    "left": "Spirit",
+   "location": "Malta",
    "maps": [
     {
      "map": "Dust2",
@@ -1697,6 +1816,7 @@
    "finished": true,
    "key": "fe102caa1b4534c5",
    "left": "Spirit",
+   "location": "Paris, France",
    "maps": [
     {
      "map": "Mirage",
@@ -1725,6 +1845,7 @@
    "finished": false,
    "key": "b5b7bdfd054dd800",
    "left": "Luminosity",
+   "location": "Paris, France",
    "maps": [],
    "right": "Spirit",
    "score": null,
@@ -1740,6 +1861,7 @@
    "finished": false,
    "key": "588ea193607533b5",
    "left": "B8",
+   "location": "",
    "maps": [],
    "right": "Spirit",
    "score": null,
@@ -1755,6 +1877,7 @@
    "finished": true,
    "key": "bcacca31c40d3131",
    "left": "Spirit",
+   "location": "CPH, DK & Porto, PT",
    "maps": [
     {
      "map": "Ancient",
@@ -1792,6 +1915,7 @@
    "finished": true,
    "key": "c12b58c6ba413b60",
    "left": "G2",
+   "location": "CPH, DK & Porto, PT",
    "maps": [
     {
      "map": "Dust2",
@@ -1829,6 +1953,7 @@
    "finished": true,
    "key": "d7e4b4eacb804f5a",
    "left": "Spirit",
+   "location": "CPH, DK & Porto, PT",
    "maps": [
     {
      "map": "Ancient",
@@ -1866,6 +1991,7 @@
    "finished": true,
    "key": "8f13c2905a149cd2",
    "left": "Spirit",
+   "location": "CPH, DK & Porto, PT",
    "maps": [
     {
      "map": "Nuke",
@@ -1903,6 +2029,7 @@
    "finished": true,
    "key": "906036cb92d18b9c",
    "left": "Spirit",
+   "location": "CPH, DK & Porto, PT",
    "maps": [
     {
      "map": "Dust2",
@@ -1958,6 +2085,7 @@
    "finished": true,
    "key": "2100e4244bce5b60",
    "left": "Spirit",
+   "location": "Katowice, Poland",
    "maps": [
     {
      "map": "Dust2",
@@ -2004,6 +2132,7 @@
    "finished": true,
    "key": "7bf9439390d1b034",
    "left": "Spirit",
+   "location": "Katowice, Poland",
    "maps": [
     {
      "map": "Ancient",
@@ -2050,6 +2179,7 @@
    "finished": true,
    "key": "f07a1fc72d0e569e",
    "left": "Spirit",
+   "location": "Katowice, Poland",
    "maps": [
     {
      "map": "Dust2",
@@ -2087,6 +2217,7 @@
    "finished": true,
    "key": "b7e311c9f4688819",
    "left": "Spirit",
+   "location": "Katowice, Poland",
    "maps": [
     {
      "map": "Cache",
@@ -2124,6 +2255,7 @@
    "finished": false,
    "key": "c430413a9395e628",
    "left": "Spirit",
+   "location": "Katowice, Poland",
    "maps": [],
    "right": "M80",
    "score": null,
