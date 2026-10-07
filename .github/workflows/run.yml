@@ -43,6 +43,9 @@ jobs:
       - name: Validate ics for iPhone import
         run: python validate_ics.py matches.ics
 
+      - name: Check calendar content against requirements
+        run: python check_calendar.py matches.ics
+
       - name: Commit generated ics file
         run: |
           git config --global user.name "github-actions[bot]"

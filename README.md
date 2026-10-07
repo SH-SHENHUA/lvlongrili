@@ -25,6 +25,8 @@
 - 时间以 UTC 写入，iPhone 会按你所在时区显示
 - 每个事件的 `UID` 由比赛 ID 稳定派生，**导入到同一个日历时是更新事件，不会产生重复条目**
 - GitHub Actions **每天**自动更新一次（03:00 UTC = 北京时间 11:00）
+- 提交前会过**两道闸门**：`validate_ics.py`（字节层/结构层，保证 iPhone 能导入）与
+  `check_calendar.py`（内容层，保证命名与备注符合上面的规则）；任一不过都不会提交
 
 ## 数据源：可选 Cito（默认）或 Liquipedia
 
@@ -171,8 +173,9 @@ Header: Authorization: Apikey <你的key>
 
 | 文件 | 作用 |
 | --- | --- |
-| `generate.py` | 拉取 Cito 数据并输出 `matches.ics` |
-| `validate_ics.py` | 校验 `matches.ics` 是否符合 iOS 导入要求（CI 在提交前运行） |
+| `generate.py` | 拉取数据并输出 `matches.ics` |
+| `validate_ics.py` | 字节层/结构层校验（CRLF、折行、必填字段、UID 唯一、无裸 LF） |
+| `check_calendar.py` | **内容层校验**：已结束必须是「队 比分 队」、未进行必须是「队 VS 队」且不带比分、每条备注必须含比赛名称与比赛 ID；已结束比赛缺地图数据时只警告 |
 | `matches.ics` | 生成结果 |
 | `matches_cache.json` | 累积缓存（只增不减，配合有限历史窗口的数据源使用） |
 | `.gitattributes` | 禁止 Git 对 `*.ics` 做行尾转换（RFC 5545 要求 CRLF） |
