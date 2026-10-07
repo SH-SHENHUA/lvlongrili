@@ -5,6 +5,7 @@
 队名不翻译；备注里显示比赛名称，已结束的比赛备注里逐张列出地图比分。
 """
 
+import json
 import os
 import re
 import sys
@@ -27,6 +28,9 @@ MAX_PAGES = 4
 REQUEST_DELAY_SECONDS = float(os.environ.get("REQUEST_DELAY") or 0.5)
 
 OUTPUT_FILE = (os.environ.get("OUTPUT_FILE") or "matches.ics").strip()
+# 累积缓存：把见过的比赛存下来。数据源的历史窗口（例如免费档只有 30 天）会让旧比赛
+# 从接口里消失，有了缓存，日历只会越来越完整，不会把已经收录的比赛丢掉。
+CACHE_FILE = (os.environ.get("CACHE_FILE") or "matches_cache.json").strip()
 CALENDAR_NAME = f"{TEAM_NAME} CS2 {YEAR}"
 # ============================
 
@@ -380,8 +384,100 @@ def _same_ignoring_dtstamp(existing: str, fresh: str) -> bool:
     return strip(existing) == strip(fresh)
 
 
+# ---------- 累积缓存 ----------
+
+def _event_to_json(event: dict) -> dict:
+    return {
+        "key": event["key"],
+        "start": event["start"].astimezone(timezone.utc).isoformat(),
+        "duration_hours": event["duration"].total_seconds() / 3600.0,
+        "left": event["left"],
+        "right": event["right"],
+        "score": list(event["score"]) if event["score"] else None,
+        "finished": event["finished"],
+        "bestof": event["bestof"],
+        "tournament": event["tournament"],
+        "maps": event["maps"],
+        "status": event["status"],
+    }
+
+
+def _event_from_json(data: dict) -> dict | None:
+    start = _parse_dt(data.get("start"))
+    if start is None or not data.get("key") or not data.get("left") or not data.get("right"):
+        return None
+    hours = data.get("duration_hours")
+    try:
+        duration = timedelta(hours=float(hours)) if hours else timedelta(hours=DEFAULT_DURATION_HOURS)
+    except (TypeError, ValueError):
+        duration = timedelta(hours=DEFAULT_DURATION_HOURS)
+    score = data.get("score")
+    return {
+        "key": str(data["key"]),
+        "start": start,
+        "duration": duration,
+        "left": str(data["left"]),
+        "right": str(data["right"]),
+        "score": tuple(score) if isinstance(score, (list, tuple)) and len(score) == 2 else None,
+        "finished": bool(data.get("finished")),
+        "bestof": _as_int(data.get("bestof")),
+        "tournament": str(data.get("tournament") or ""),
+        "maps": data.get("maps") or [],
+        "status": str(data.get("status") or ""),
+    }
+
+
+def load_cache() -> dict:
+    if not os.path.exists(CACHE_FILE):
+        return {}
+    try:
+        with open(CACHE_FILE, encoding="utf-8") as fh:
+            payload = json.load(fh)
+    except (OSError, ValueError) as exc:
+        print(f"[cache] 读取 {CACHE_FILE} 失败，将忽略：{exc}")
+        return {}
+    raw = payload.get("matches") if isinstance(payload, dict) else payload
+    cache = {}
+    for item in raw or []:
+        event = _event_from_json(item)
+        if event:
+            cache[event["key"]] = event
+    print(f"[cache] 已有 {len(cache)} 场历史记录")
+    return cache
+
+
+def save_cache(cache: dict) -> None:
+    items = [_event_to_json(event) for event in sorted(cache.values(), key=lambda e: e["start"])]
+    payload = {"team": TEAM_NAME, "year": YEAR, "count": len(items), "matches": items}
+    with open(CACHE_FILE, "w", encoding="utf-8") as fh:
+        json.dump(payload, fh, ensure_ascii=False, indent=1, sort_keys=True)
+        fh.write("\n")
+
+
+def merge_with_cache(events: list, cache: dict) -> tuple[list, int]:
+    """接口的数据优先；接口这次没返回、但缓存里有且属于本年的比赛保留下来。"""
+    merged = dict(cache)
+    for event in events:
+        merged[event["key"]] = event
+    source_keys = {event["key"] for event in events}
+    kept_from_cache = sum(
+        1 for key, event in merged.items()
+        if key not in source_keys and event["start"].year == YEAR
+    )
+    result = [event for event in merged.values() if event["start"].year == YEAR]
+    result.sort(key=lambda event: event["start"])
+    return result, kept_from_cache
+
+
 def main():
     events, calendar_note = collect_events()
+
+    cache = load_cache()
+    events, kept_from_cache = merge_with_cache(events, cache)
+    if kept_from_cache:
+        print(f"[cache] 本次接口未返回、但缓存保留的比赛：{kept_from_cache} 场")
+    print(f"[cache] 合并后共 {len(events)} 场（已结束 {sum(1 for e in events if e['finished'])} 场）")
+    save_cache({event["key"]: event for event in events})
 
     stamp = utc_stamp(_now_utc())
     ics = build_calendar(events, stamp, calendar_note)
