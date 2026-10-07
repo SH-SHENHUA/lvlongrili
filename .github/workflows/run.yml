@@ -30,10 +30,8 @@ jobs:
 
       - name: Run script
         env:
-          # Liquipedia 免费 API key，请在仓库 Settings -> Secrets 里添加同名 Secret
-          LIQUIPEDIA_API_KEY: ${{ secrets.LIQUIPEDIA_API_KEY }}
-          # 可选：User-Agent 里带上联系方式（Liquipedia 条款要求）
-          LIQUIPEDIA_USER_AGENT: ${{ secrets.LIQUIPEDIA_USER_AGENT }}
+          # bzzoiro 的 API key，请在仓库 Settings -> Secrets 里添加同名 Secret
+          BZZOIRO_API_KEY: ${{ secrets.BZZOIRO_API_KEY }}
         run: python generate.py
 
       - name: Validate ics for iPhone import
