@@ -192,4 +192,20 @@ pip install -r requirements.txt
 export CITO_API_KEY=你的key      # Windows: set CITO_API_KEY=你的key
 python generate.py
 python validate_ics.py matches.ics
+python check_calendar.py matches.ics
 ```
+
+## 首次运行自检清单（常见问题）
+
+1. **工作流在 “Run script” 步骤失败**：多半是仓库里还没加 Secret。
+   日志会明确写「缺少 CITO_API_KEY」并给出注册地址；失败时**不会**提交任何文件，
+   仓库里已有的 `matches.ics` 保持不动。
+2. **工作流跑到提交时报 403 / 无法 push**：GitHub 对新仓库的 Actions 权限有时默认是只读。
+   到 `Settings → Actions → General → Workflow permissions` 选
+   **Read and write permissions** 再重跑一次。
+3. **运行成功但 `matches.ics` 没变化**：说明比赛内容与上次完全一致（只差 DTSTAMP），
+   脚本会跳过写入并在日志里说明 —— 这是有意为之，避免每天产生无意义提交。
+4. **某场比赛没出现在日历里**：看日志里的「过滤掉 非本队 / 年份不符 / 缺少开赛时间 / 重复」
+   统计，以及「缺少开赛时间」的逐条警告（接口偶尔不给开赛时间）。
+5. **已结束比赛但备注写「地图比分：数据缺失」**：说明该场数据源没给逐地图数据。
+   内容检查闸门只警告不失败，日历照常更新。
