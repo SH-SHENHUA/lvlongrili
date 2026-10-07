@@ -39,6 +39,9 @@ MAX_LINE_OCTETS = 75
 BO_DURATION_HOURS = {1: 1.0, 2: 1.5, 3: 2.5, 4: 3.5, 5: 4.0}
 DEFAULT_DURATION_HOURS = 2.0
 
+# 只打印一次 maps 元素的字段名，便于在 CI 日志里核对解析
+_MAP_SHAPE_LOGGED = False
+
 
 # ---------- 工具 ----------
 
@@ -138,7 +141,13 @@ def _matches_team(record: dict) -> bool:
 
 
 def _map_rows(detail: dict) -> list:
-    """逐地图比分。详情接口的 maps 元素结构未在规范里写死，这里做容错。"""
+    """逐地图比分。
+
+    注意：bzzoiro 的 OpenAPI 规范里 maps 的元素结构是未定义的（items: {}），
+    所以这里对多种可能的字段名做容错；首次遇到时会打印一次字段名到日志，
+    便于发现对方改了结构或我方解析有遗漏。
+    """
+    global _MAP_SHAPE_LOGGED
     rows = []
     for item in detail.get("maps") or []:
         if isinstance(item, str):
@@ -146,13 +155,22 @@ def _map_rows(detail: dict) -> list:
             continue
         if not isinstance(item, dict):
             continue
-        map_name = str(_pick(item, "map", "map_name", "mapname", "name") or "").strip()
-        scores = _pick(item, "scores")
-        if isinstance(scores, (list, tuple)) and len(scores) >= 2:
+        if not _MAP_SHAPE_LOGGED:
+            print(f"[bzzoiro] maps 元素的字段名（首次出现，便于核对解析）：{sorted(item)}")
+            _MAP_SHAPE_LOGGED = True
+
+        map_name = str(_pick(item, "map", "map_name", "mapname", "name", "map_title") or "").strip()
+        scores = _pick(item, "scores", "score", "round_scores")
+        if isinstance(scores, dict):
+            left = _as_int(_pick(scores, "home", "left", "team1", "home_score"))
+            right = _as_int(_pick(scores, "away", "right", "team2", "away_score"))
+        elif isinstance(scores, (list, tuple)) and len(scores) >= 2:
             left, right = _as_int(scores[0]), _as_int(scores[1])
         else:
-            left = _as_int(_pick(item, "home_score", "score_home", "score1", "score_left"))
-            right = _as_int(_pick(item, "away_score", "score_away", "score2", "score_right"))
+            left = _as_int(_pick(item, "home_score", "score_home", "score1", "score_left",
+                                 "home_rounds", "rounds_home"))
+            right = _as_int(_pick(item, "away_score", "score_away", "score2", "score_right",
+                                  "away_rounds", "rounds_away"))
         if not map_name and left is None and right is None:
             continue
         rows.append({"map": map_name or "?", "scores": [left, right],
