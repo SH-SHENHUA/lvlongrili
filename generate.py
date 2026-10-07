@@ -108,12 +108,50 @@ def _api_get(path: str, params: dict | None = None):
     return payload
 
 
+def resolve_team() -> dict | None:
+    """校验 TEAM_SLUG 并取回队伍资料（尽力而为，失败不影响主流程）。
+
+    slug 跟着队名走（官方文档：Team IDs are stable; slugs follow the current name），
+    所以先确认一次，既能把接口用的队名/ID 回显到日志里，也能在 slug 写错时给出可读的提示。
+    """
+    try:
+        payload = _api_get(f"/cs2/teams/{TEAM_SLUG}")
+    except SystemExit:
+        raise
+    except requests.HTTPError as exc:
+        status = exc.response.status_code if exc.response is not None else "?"
+        if status == 404:
+            raise SystemExit(
+                f"错误：Cito 里找不到队伍 slug={TEAM_SLUG!r}（HTTP 404）。\n"
+                f"请确认 TEAM_SLUG：例如 Team Spirit 通常为 spirit（也可直接用队伍 id，"
+                f"形如 cs2-team-7020）。\n"
+                f"可用 GET {API_BASE}/cs2/teams/{{slug}} 逐个试，或参考官方文档的 Teams 部分。"
+            )
+        print(f"[cito] 队伍资料查询失败（HTTP {status}），继续按 slug 取比赛列表")
+        return None
+    data = payload.get("data") if isinstance(payload, dict) else payload
+    if isinstance(data, dict) and data.get("name"):
+        print(f"[cito] 队伍确认：{data.get('name')}"
+              f"（id={data.get('id')}，slug={data.get('slug')}，"
+              f"世界排名={data.get('worldRanking')}）")
+    return data if isinstance(data, dict) else None
+
+
 def fetch_matches() -> list:
     """取该队的全部比赛（含进行中与已结束，maps 内嵌在列表响应里）。"""
     results, page = [], 1
     for _ in range(MAX_PAGES):
-        payload = _api_get(f"/cs2/teams/{TEAM_SLUG}/matches",
-                           {"limit": PAGE_SIZE, "page": page})
+        try:
+            payload = _api_get(f"/cs2/teams/{TEAM_SLUG}/matches",
+                               {"limit": PAGE_SIZE, "page": page})
+        except requests.HTTPError as exc:
+            status = exc.response.status_code if exc.response is not None else "?"
+            if status == 404:
+                raise SystemExit(
+                    f"错误：Cito 的 /cs2/teams/{TEAM_SLUG}/matches 返回 404。\n"
+                    f"通常是 TEAM_SLUG 不对（Team Spirit 一般用 spirit，或直接用队伍 id）。"
+                )
+            raise SystemExit(f"错误：请求 Cito 失败（HTTP {status}）：{exc}")
         batch = payload.get("data") if isinstance(payload, dict) else payload
         batch = batch or []
         print(f"[cito] 第 {page} 页取到 {len(batch)} 条（累计 {len(results) + len(batch)}）")
@@ -238,6 +276,7 @@ def normalize(record: dict) -> dict | None:
 
 
 def collect_events() -> tuple[list, str]:
+    resolve_team()
     records = fetch_matches()
     print(f"[cito] 列表共取到 {len(records)} 条")
 

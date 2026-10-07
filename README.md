@@ -59,8 +59,15 @@
 | bo3.gg | ❌ `match_maps` 只有地图名/顺序，没有比分；且无法按队伍列出赛程 | 无需 key | 排除 |
 | HLTV 直连 / 社区镜像 | 页面有数据 | —— | 全部 **403**（Cloudflare），GitHub Actions 同样会被拦 |
 
-请求量：每天只需 1 次请求（`/cs2/teams/{slug}/matches`，`limit=250`），
-约 30 次/月，远低于免费档 500 次/月。
+请求量：每天 2 次请求（`/cs2/teams/{slug}` 确认队伍 + `/cs2/teams/{slug}/matches?limit=250` 取比赛），
+约 60 次/月，仍远低于免费档 500 次/月。
+
+`TEAM_SLUG` 写错时会有明确提示（而不是一串 traceback）：
+
+```
+错误：Cito 里找不到队伍 slug='spirit'（HTTP 404）。
+请确认 TEAM_SLUG：例如 Team Spirit 通常为 spirit（也可直接用队伍 id，形如 cs2-team-7020）。
+```
 
 ### ⚠️ 免费档只开放最近 30 天的历史
 
