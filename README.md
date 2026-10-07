@@ -154,6 +154,13 @@ Header: Authorization: Apikey <你的key>
 （Spirit 实际打完整届并夺冠，Cito 只收录 2 场，其中 1 场还停在未结束），
 加上 Liquipedia 后可以把这段补上，且已有的比赛是原地更新、不会重复。
 
+**赛事对阵结构补齐 + 人工补录**：脚本还会用赛事详情的对阵结构（`eventStructure`）做两件事 ——
+① 把「队伍接口里停在未结束、但对阵结构已有比分」的场次回填结果（实测 2 场）；
+② 找出「队伍接口完全没收录」的场次并尝试取详情（实测有 4 场详情接口返回 404，拿不到开赛时间）。
+取不到时间的那几场已用 `manual_matches.json` **人工补录**（只放已完赛比赛，比分取自对阵结构、
+日期取自赛程记录，来源写在文件注释里）。因此当前日历是 **59 场**，
+其中 **6 场没有逐地图比分**（4 场人工补录 + 2 场接口只给了系列赛比分），备注里都注明了「地图比分：数据缺失」。
+
 **地点是「赛事级」的**：`LOCATION` 取自赛事（`GET /cs2/events/{id}`），
 因此跨场馆的赛事会显示赛事的登记地点。例如 Esports World Cup 2026 主赛场在利雅得、
 但总决赛移师巴黎 Accor Arena，Cito 把该赛事的地点登记为 `Paris, France`，
@@ -177,6 +184,8 @@ Header: Authorization: Apikey <你的key>
 | `RATE_LIMIT_WAIT` | `20` | 遇到 429 限流时等待秒数（响应带 Retry-After 时以其为准，最多重试 3 次） |
 | `OUTPUT_FILE` | `matches.ics` | 输出文件名 |
 | `CACHE_FILE` | `matches_cache.json` | 累积缓存文件名（同时缓存「赛事 → 举办城市」，位置几乎不变，无需每天重查） |
+| `MANUAL_FILE` | `manual_matches.json` | 人工补录文件名 |
+| `EVENT_REFRESH_DAYS` | `7` | 赛事详情最多多少天重拉一次（赛事可能仍在进行、还会新增比赛） |
 
 ## 导入 iPhone 日历
 
@@ -195,7 +204,8 @@ Header: Authorization: Apikey <你的key>
 | `validate_ics.py` | 字节层/结构层校验（CRLF、折行、必填字段、UID 唯一、无裸 LF） |
 | `check_calendar.py` | **内容层校验**：已结束必须是「队 比分 队」、未进行必须是「队 VS 队」且不带比分、每条备注必须含比赛名称与比赛 ID；已结束比赛缺地图数据时只警告 |
 | `matches.ics` | 生成结果 |
-| `matches_cache.json` | 累积缓存（只增不减，配合有限历史窗口的数据源使用） |
+| `matches_cache.json` | 累积缓存（只增不减，配合有限历史窗口的数据源使用；同时缓存赛事地点与对阵结构） |
+| `manual_matches.json` | **人工补录**：数据源缺失、且比赛详情接口取不到（实测 404）的**已完赛**场次。只放已完赛比赛，比分来自赛事对阵结构，日期来自赛程记录，来源写在文件注释里 |
 | `.gitattributes` | 禁止 Git 对 `*.ics` 做行尾转换（RFC 5545 要求 CRLF） |
 
 ## 本地运行

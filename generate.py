@@ -37,6 +37,7 @@ LIQUIPEDIA_USER_AGENT = (os.environ.get("LIQUIPEDIA_USER_AGENT")
 
 # Team Spirit 在 Cito 里的 slug（接口也接受 id，如 cs2-team-7020）。
 TEAM_SLUG = (os.environ.get("TEAM_SLUG") or "spirit").strip()
+TEAM_ID = ""  # 由 resolve_team() 填入，用于在赛事对阵结构里认本队的比赛
 TEAM_NAME = (os.environ.get("TEAM_NAME") or "Team Spirit").strip()
 # 可选：额外的队名写法（逗号分隔），用于 Liquipedia 条件与过滤兜底
 TEAM_ALIASES = [item.strip() for item in (os.environ.get("TEAM_ALIASES") or "").split(",")
@@ -54,6 +55,8 @@ OUTPUT_FILE = (os.environ.get("OUTPUT_FILE") or "matches.ics").strip()
 # 累积缓存：把见过的比赛存下来。数据源的历史窗口（例如免费档只有 30 天）会让旧比赛
 # 从接口里消失，有了缓存，日历只会越来越完整，不会把已经收录的比赛丢掉。
 CACHE_FILE = (os.environ.get("CACHE_FILE") or "matches_cache.json").strip()
+# 人工补录：数据源缺失、且比赛详情接口取不到（实测 404）的已完赛场次
+MANUAL_FILE = (os.environ.get("MANUAL_FILE") or "manual_matches.json").strip()
 CALENDAR_NAME = f"{TEAM_NAME} CS2 {YEAR}"
 # ============================
 
@@ -66,6 +69,8 @@ DEFAULT_DURATION_HOURS = 2.0
 
 # 已过开赛时间这么久仍未结束的比赛，标注「结果未更新（可能延期或取消）」
 STALE_HOURS = 12
+# 赛事详情最多多少天重新拉一次（赛事可能仍在进行、还会新增比赛）
+EVENT_REFRESH_DAYS = int(os.environ.get("EVENT_REFRESH_DAYS") or 7)
 
 
 # ---------- 工具 ----------
@@ -200,6 +205,8 @@ def resolve_team() -> dict | None:
         return None
     data = payload.get("data") if isinstance(payload, dict) else payload
     if isinstance(data, dict) and data.get("name"):
+        global TEAM_ID
+        TEAM_ID = str(data.get("id") or "")
         print(f"[cito] 队伍确认：{data.get('name')}"
               f"（id={data.get('id')}，slug={data.get('slug')}，"
               f"世界排名={data.get('worldRanking')}）")
@@ -319,11 +326,58 @@ def _event_id_of(record: dict) -> str:
     return str(record.get("eventId") or "")
 
 
-def event_locations(records: list, cached: dict | None = None) -> dict:
-    """按赛事取「举办城市／地点」，并写入缓存（位置几乎不变，不必每天重查）。
+def _structure_matches(structure, team_ids: set) -> list:
+    """从赛事详情的 eventStructure 里抽出「涉及本队且有比分」的比赛。
 
-    列表接口不返回位置，需要 GET /cs2/events/{id}；2026 年该队只有十几个赛事，
-    首次运行补齐后，之后每天通常只需查询新增赛事（免费档限 10 次/分钟）。
+    实测意义：Cito 的队伍接口会漏掉某些比赛。例如 Esports World Cup 2026，
+    Spirit 实际打完整届并夺冠，但 /cs2/teams/spirit/matches 只收录 2 场；
+    而这些场次在赛事详情的对阵结构里是全的（含系列赛比分）。
+    """
+    found = {}
+
+    def walk(node):
+        if isinstance(node, dict):
+            teams = node.get("teams")
+            if (isinstance(teams, list) and len(teams) >= 2
+                    and all(isinstance(t, dict) and "score" in t and "winner" in t for t in teams)):
+                match_id = str(node.get("id") or "")
+                ids = {str(t.get("id") or "") for t in teams}
+                scores = [_as_int(t.get("score")) for t in teams]
+                if match_id and (ids & team_ids) and all(s is not None for s in scores[:2]):
+                    found[match_id] = {
+                        "id": match_id,
+                        "teams": [{"id": str(t.get("id") or ""), "name": str(t.get("name") or ""),
+                                   "score": _as_int(t.get("score"))} for t in teams],
+                    }
+            for value in node.values():
+                walk(value)
+        elif isinstance(node, list):
+            for item in node:
+                walk(item)
+
+    walk(structure)
+    return list(found.values())
+
+
+def _event_needs_refresh(entry: dict | None) -> bool:
+    """赛事详情是否需要（重新）拉取：没缓存过、赛事可能仍在进行、或缓存太旧。"""
+    if not entry:
+        return True
+    ends = _parse_dt(entry.get("endsAt"))
+    if ends is not None and ends > _now_utc() - timedelta(days=1):
+        return True
+    checked = _parse_dt(entry.get("checked_at"))
+    if checked is None:
+        return True
+    return (_now_utc() - checked).days >= EVENT_REFRESH_DAYS
+
+
+def event_locations(records: list, cached: dict | None = None) -> dict:
+    """按赛事取「举办城市／地点」，并把赛事详情里的对阵结构一并缓存。
+
+    列表接口不返回位置，需要 GET /cs2/events/{id}；同一份响应里还带着该赛事的
+    全部对阵（eventStructure），可用来补齐队伍接口漏掉的比赛。
+    位置与对阵几乎不变，缓存后之后每天通常无需重复查询（免费档限 10 次/分钟）。
     """
     locations = cached if cached is not None else {}
     event_ids = []
@@ -336,24 +390,42 @@ def event_locations(records: list, cached: dict | None = None) -> dict:
         event_id = _event_id_of(record)
         if event_id and event_id not in event_ids:
             event_ids.append(event_id)
-    missing = [event_id for event_id in event_ids if event_id not in locations]
-    if missing:
-        print(f"[cito] 需查询 {len(missing)} 个赛事的位置（已缓存 {len(locations)} 个）")
-    for event_id in missing:
+
+    todo = [event_id for event_id in event_ids if _event_needs_refresh(locations.get(event_id))]
+    print(f"[cito] 赛事详情：共 {len(event_ids)} 个，本次需查询 {len(todo)} 个"
+          f"（已缓存且未过期 {len(event_ids) - len(todo)} 个）")
+    for event_id in todo:
         try:
             payload = _api_get(f"/cs2/events/{event_id}")
         except requests.HTTPError as exc:
             status = exc.response.status_code if exc.response is not None else "?"
-            print(f"[cito] 赛事 {event_id} 位置查询失败（HTTP {status}），该场将不显示地点")
+            print(f"[cito] 赛事 {event_id} 详情查询失败（HTTP {status}），沿用缓存")
             continue
         data = payload.get("data") if isinstance(payload, dict) else payload
-        if isinstance(data, dict):
-            locations[event_id] = {
-                "name": str(data.get("name") or ""),
-                "location": str(data.get("location") or "").strip(),
-                "isLan": data.get("isLan"),
-            }
+        if not isinstance(data, dict):
+            continue
+        previous = locations.get(event_id) or {}
+        entry = {
+            "name": str(data.get("name") or ""),
+            "location": str(data.get("location") or "").strip(),
+            "isLan": data.get("isLan"),
+            "status": data.get("status"),
+            "endsAt": data.get("endsAt"),
+            "checked_at": _now_utc().strftime("%Y-%m-%dT%H:%M:%SZ"),
+            # 已处理过的补充比赛 id 要保留，避免每天重复查详情
+            "fetched_ids": list(previous.get("fetched_ids") or []),
+            "matches": _structure_matches(data.get("eventStructure"), _team_ids()),
+        }
+        locations[event_id] = entry
     return locations
+
+
+def _team_ids() -> set:
+    """本队在 Cito 里的 id 集合（用于在赛事对阵结构里认出本队的比赛）。"""
+    ids = {TEAM_SLUG} if TEAM_SLUG.startswith("cs2-team-") else set()
+    if TEAM_ID:
+        ids.add(TEAM_ID)
+    return ids
 
 
 def _location_for(record: dict, locations: dict) -> str:
@@ -415,11 +487,94 @@ def normalize(record: dict, location: str = "") -> dict | None:
     }
 
 
+def _structure_index(locations: dict) -> dict:
+    """{比赛id: [(队名, 比分), ...]}，来自各赛事对阵结构（用于回填缺失的结果）。"""
+    index = {}
+    for entry in locations.values():
+        if not isinstance(entry, dict):
+            continue
+        for item in entry.get("matches") or []:
+            teams = (item or {}).get("teams") or []
+            if len(teams) >= 2:
+                index[str(item.get("id") or "")] = [
+                    (str(team.get("name") or ""), _as_int(team.get("score"))) for team in teams
+                ]
+    return index
+
+
+def _structure_scores(index: dict, match_id: str, left: str, right: str):
+    """按队名把结构里的比分对应到本场（接口两边顺序可能不同），拿不到就返回 None。"""
+    entry = index.get(match_id)
+    if not entry:
+        return None
+    by_name = {name.lower(): score for name, score in entry if name}
+    left_score, right_score = by_name.get(left.lower()), by_name.get(right.lower())
+    if left_score is None or right_score is None or not score_is_sane(left_score, right_score):
+        return None
+    return (left_score, right_score)
+
+
+def _supplement_from_structures(records: list, locations: dict, events: list) -> list:
+    """用赛事对阵结构里「队伍接口漏掉或没给结果」的比赛补齐日历。
+
+    只对满足以下条件的场次查一次详情（并记进 fetched_ids，避免每天重复查）：
+      - 出现在赛事对阵结构里且涉及本队、有系列赛比分；
+      - 队伍接口里没有这场，或者接口给的还不是最终结果（例如停在 unresolved）。
+    """
+    completed_ids = set()
+    for record in records:
+        if str(record.get("status") or "").lower() != "completed":
+            continue
+        if score_is_sane(_as_int(record.get("team1Score")), _as_int(record.get("team2Score"))):
+            completed_ids.add(str(record.get("id") or ""))
+    known_keys = {event["key"] for event in events}
+    extras = []
+    for event_id, entry in locations.items():
+        if not isinstance(entry, dict):
+            continue
+        for item in entry.get("matches") or []:
+            match_id = str((item or {}).get("id") or "")
+            if not match_id or match_id in completed_ids:
+                continue
+            if match_id in (entry.get("fetched_ids") or []):
+                continue
+            try:
+                payload = _api_get(f"/cs2/matches/{match_id}")
+            except requests.HTTPError as exc:
+                status = exc.response.status_code if exc.response is not None else "?"
+                # 记下来，避免每天都重试同一场：结构里有、但比赛详情取不到（实测 404）
+                entry.setdefault("fetched_ids", []).append(match_id)
+                if status == 404:
+                    print(f"[cito] 赛事对阵结构里的 {match_id} 在比赛接口取不到（404），"
+                          f"无法确定开赛时间，暂不加入日历")
+                else:
+                    print(f"[cito] 补齐 {match_id} 失败（HTTP {status}）")
+                continue
+            detail = payload.get("data") if isinstance(payload, dict) else payload
+            if not isinstance(detail, dict):
+                continue
+            entry.setdefault("fetched_ids", []).append(match_id)
+            event = normalize(detail, location=str(entry.get("location") or ""))
+            if event is None:
+                continue
+            if event["key"] in known_keys:
+                # 同一场（日期+队名一致）已在列表里，用更完整的结果覆盖它
+                for index, existing in enumerate(extras):
+                    if existing["key"] == event["key"]:
+                        extras[index] = event
+                        break
+                continue
+            known_keys.add(event["key"])
+            extras.append(event)
+    return extras
+
+
 def _collect_cito(cached_locations: dict | None = None) -> tuple[list, str]:
     resolve_team()
     records = fetch_matches()
     print(f"[cito] 列表共取到 {len(records)} 条")
     locations = event_locations(records, cached_locations)
+    structure_index = _structure_index(locations)
 
     accepted_names = _detect_team_names(records)
     if accepted_names:
@@ -432,6 +587,7 @@ def _collect_cito(cached_locations: dict | None = None) -> tuple[list, str]:
         print("[cito] 未能自识别队名，将按配置的 TEAM_NAME / slug 过滤")
 
     events, skipped_team, skipped_year, skipped_time, duplicates = [], 0, 0, 0, 0
+    patched = 0
     missing_time = []
     seen = set()
     for record in records:
@@ -450,6 +606,17 @@ def _collect_cito(cached_locations: dict | None = None) -> tuple[list, str]:
             skipped_year += 1
             continue
         event = normalize(record, location=_location_for(record, locations))
+        if event is not None and not event["finished"]:
+            # 某些比赛在队伍接口里停在 unresolved，但赛事对阵结构里已有比分：
+            # 用结构里的比分回填（按队名对应，接口两边顺序可能不同）
+            patch = _structure_scores(structure_index, str(record.get("id") or ""),
+                                      event["left"], event["right"])
+            if patch:
+                event["finished"] = True
+                event["score"] = patch
+                event["status"] = "completed"
+                event["data_note"] = ""
+                patched += 1
         if event is None:
             skipped_year += 1
             continue
@@ -458,6 +625,20 @@ def _collect_cito(cached_locations: dict | None = None) -> tuple[list, str]:
             continue
         seen.add(event["key"])
         events.append(event)
+
+    # 用赛事详情里的对阵结构补齐队伍接口漏掉／没给出结果的比赛
+    supplemented = _supplement_from_structures(records, locations, events)
+    if supplemented:
+        events.extend(supplemented)
+        print(f"[cito] 从赛事对阵结构补齐 {len(supplemented)} 场"
+              f"（队伍接口未收录或未给结果）：")
+        for item in supplemented:
+            print(f"         {item['start'].strftime('%Y-%m-%d')} "
+                  f"{item['left']} {item['score'][0]}-{item['score'][1]} {item['right']}"
+                  f"（{item['tournament']}）")
+    if patched:
+        print(f"[cito] 另有 {patched} 场用赛事对阵结构里的比分回填了结果"
+              f"（队伍接口里仍是未结束）")
 
     if not events:
         # 不在这里直接失败：可能是休赛期，或者数据源只给最近 30 天而这段时间没有比赛。
@@ -687,6 +868,61 @@ def _lp_team_in(record: dict) -> bool:
 
 # ---------- 数据源调度 ----------
 
+def load_manual_events() -> list:
+    """读取人工补录的比赛（仅已完赛；见 manual_matches.json 里的说明）。"""
+    if not os.path.exists(MANUAL_FILE):
+        return []
+    try:
+        with open(MANUAL_FILE, encoding="utf-8") as fh:
+            payload = json.load(fh)
+    except (OSError, ValueError) as exc:
+        print(f"[manual] 读取 {MANUAL_FILE} 失败，将忽略：{exc}")
+        return []
+    events = []
+    for item in (payload.get("matches") if isinstance(payload, dict) else payload) or []:
+        if not isinstance(item, dict):
+            continue
+        start = _parse_dt(item.get("date"))
+        left = str(item.get("left") or "").strip()
+        right = str(item.get("right") or "").strip()
+        score = item.get("score")
+        if start is None or not left or not right:
+            print(f"[manual] 跳过格式不完整的条目：{item}")
+            continue
+        if not (isinstance(score, (list, tuple)) and len(score) == 2
+                and score_is_sane(_as_int(score[0]), _as_int(score[1]))):
+            print(f"[manual] 跳过没有有效终局比分的条目（人工补录只放已完赛）："
+                  f"{left} vs {right}")
+            continue
+        if start.year != YEAR:
+            continue
+        events.append({
+            "key": canonical_key(start, left, right),
+            "source_id": str(item.get("source_id") or f"manual:{start.date()}:{left}-{right}"),
+            "start": start,
+            "duration": timedelta(hours=BO_DURATION_HOURS.get(_as_int(item.get("bestof")),
+                                                             DEFAULT_DURATION_HOURS)),
+            "left": left,
+            "right": right,
+            "score": (_as_int(score[0]), _as_int(score[1])),
+            "finished": True,
+            "bestof": _as_int(item.get("bestof")),
+            "tournament": str(item.get("tournament") or "").strip() or "未知赛事",
+            "location": str(item.get("location") or "").strip(),
+            "maps": item.get("maps") or [],
+            "status": "completed",
+            # note 只作来源记录（写在 manual_matches.json 里便于日后核对），不进日历备注
+            "data_note": str(item.get("calendar_note") or "").strip(),
+        })
+    if events:
+        print(f"[manual] 人工补录 {len(events)} 场已完赛比赛：")
+        for event in events:
+            print(f"         {event['start'].strftime('%Y-%m-%d')} {event['left']} "
+                  f"{event['score'][0]}-{event['score'][1]} {event['right']}"
+                  f"（{event['tournament']}）")
+    return events
+
+
 SOURCES = {"cito": _collect_cito, "liquipedia": _collect_liquipedia}
 
 
@@ -720,6 +956,21 @@ def collect_events(cached_locations: dict | None = None) -> tuple[list, str]:
         for event in events:
             merged[event["key"]] = event
         notes.append(note)
+
+    # 人工补录只用来补数据源没有的场次；若数据源已给出更好的记录（有结果），以数据源为准
+    manual = load_manual_events()
+    filled = 0
+    for event in manual:
+        current = merged.get(event["key"])
+        if current is None:
+            merged[event["key"]] = event
+            filled += 1
+        elif not current["finished"] and event["finished"]:
+            merged[event["key"]] = event
+            filled += 1
+    if filled:
+        notes.append(f"人工补录 {filled} 场")
+
     return list(merged.values()), " + ".join(notes)
 
 
@@ -930,11 +1181,27 @@ def save_cache(cache: dict, locations: dict | None = None) -> None:
         fh.write("\n")
 
 
+def _is_richer(candidate: dict, current: dict) -> bool:
+    """候选记录是否比现有记录信息更全。
+
+    用于避免「数据源某天把已有结果变回未结束」这种倒退把缓存里的结果冲掉：
+    有结果的胜过没结果的，有逐地图比分的胜过没有的；同强度时以新数据为准。
+    """
+    if bool(candidate["finished"]) != bool(current["finished"]):
+        return bool(candidate["finished"])
+    if candidate["finished"] and bool(candidate["maps"]) != bool(current["maps"]):
+        return bool(candidate["maps"])
+    return True
+
+
 def merge_with_cache(events: list, cache: dict) -> tuple[list, int]:
-    """接口的数据优先；接口这次没返回、但缓存里有且属于本年的比赛保留下来。"""
+    """接口的数据优先（但不会用更差的记录覆盖更好的）；接口本次没返回、
+    但缓存里有且属于本年的比赛保留下来。"""
     merged = dict(cache)
     for event in events:
-        merged[event["key"]] = event
+        current = merged.get(event["key"])
+        if current is None or _is_richer(event, current):
+            merged[event["key"]] = event
     source_keys = {event["key"] for event in events}
     kept_from_cache = sum(
         1 for key, event in merged.items()

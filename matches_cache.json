@@ -1,80 +1,804 @@
 {
- "count": 55,
+ "count": 59,
  "event_locations": {
   "cs2-event-8049": {
+   "checked_at": "2026-10-07T16:47:27Z",
+   "endsAt": "2026-05-17T23:59:59.000Z",
+   "fetched_ids": [],
    "isLan": true,
    "location": "Astana, Kazakhstan",
-   "name": "PGL Astana 2026"
+   "matches": [
+    {
+     "id": "cs2-match-2394150",
+     "teams": [
+      {
+       "id": "cs2-team-7020",
+       "name": "Spirit",
+       "score": 2
+      },
+      {
+       "id": "cs2-team-5995",
+       "name": "G2",
+       "score": 0
+      }
+     ]
+    },
+    {
+     "id": "cs2-match-2394153",
+     "teams": [
+      {
+       "id": "cs2-team-4494",
+       "name": "MOUZ",
+       "score": 0
+      },
+      {
+       "id": "cs2-team-7020",
+       "name": "Spirit",
+       "score": 2
+      }
+     ]
+    },
+    {
+     "id": "cs2-match-2394156",
+     "teams": [
+      {
+       "id": "cs2-team-7020",
+       "name": "Spirit",
+       "score": 3
+      },
+      {
+       "id": "cs2-team-11283",
+       "name": "Falcons",
+       "score": 0
+      }
+     ]
+    }
+   ],
+   "name": "PGL Astana 2026",
+   "status": "completed"
   },
   "cs2-event-8240": {
+   "checked_at": "2026-10-07T16:48:31Z",
+   "endsAt": "2026-02-08T23:59:59.000Z",
+   "fetched_ids": [],
    "isLan": true,
    "location": "Kraków, Poland",
-   "name": "IEM Kraków 2026"
+   "matches": [
+    {
+     "id": "cs2-match-2389665",
+     "teams": [
+      {
+       "id": "cs2-team-7020",
+       "name": "Spirit",
+       "score": 2
+      },
+      {
+       "id": "cs2-team-4494",
+       "name": "MOUZ",
+       "score": 0
+      }
+     ]
+    },
+    {
+     "id": "cs2-match-2389663",
+     "teams": [
+      {
+       "id": "cs2-team-7020",
+       "name": "Spirit",
+       "score": 1
+      },
+      {
+       "id": "cs2-team-8297",
+       "name": "FURIA",
+       "score": 2
+      }
+     ]
+    },
+    {
+     "id": "cs2-match-2389640",
+     "teams": [
+      {
+       "id": "cs2-team-7020",
+       "name": "Spirit",
+       "score": 2
+      },
+      {
+       "id": "cs2-team-6665",
+       "name": "Astralis",
+       "score": 0
+      }
+     ]
+    },
+    {
+     "id": "cs2-match-2389647",
+     "teams": [
+      {
+       "id": "cs2-team-4608",
+       "name": "Natus Vincere",
+       "score": 0
+      },
+      {
+       "id": "cs2-team-7020",
+       "name": "Spirit",
+       "score": 2
+      }
+     ]
+    },
+    {
+     "id": "cs2-match-2389659",
+     "teams": [
+      {
+       "id": "cs2-team-5995",
+       "name": "G2",
+       "score": 1
+      },
+      {
+       "id": "cs2-team-7020",
+       "name": "Spirit",
+       "score": 2
+      }
+     ]
+    }
+   ],
+   "name": "IEM Kraków 2026",
+   "status": "completed"
   },
   "cs2-event-8242": {
+   "checked_at": "2026-10-07T16:47:45Z",
+   "endsAt": "2026-04-19T23:59:59.000Z",
+   "fetched_ids": [],
    "isLan": true,
    "location": "Rio de Janeiro, Brazil",
-   "name": "IEM Rio 2026"
+   "matches": [
+    {
+     "id": "cs2-match-2393240",
+     "teams": [
+      {
+       "id": "cs2-team-7020",
+       "name": "Spirit",
+       "score": 2
+      },
+      {
+       "id": "cs2-team-4494",
+       "name": "MOUZ",
+       "score": 0
+      }
+     ]
+    },
+    {
+     "id": "cs2-match-2393242",
+     "teams": [
+      {
+       "id": "cs2-team-11283",
+       "name": "Falcons",
+       "score": 0
+      },
+      {
+       "id": "cs2-team-7020",
+       "name": "Spirit",
+       "score": 2
+      }
+     ]
+    },
+    {
+     "id": "cs2-match-2393245",
+     "teams": [
+      {
+       "id": "cs2-team-7020",
+       "name": "Spirit",
+       "score": 0
+      },
+      {
+       "id": "cs2-team-9565",
+       "name": "Vitality",
+       "score": 3
+      }
+     ]
+    },
+    {
+     "id": "cs2-match-2393083",
+     "teams": [
+      {
+       "id": "cs2-team-7020",
+       "name": "Spirit",
+       "score": 2
+      },
+      {
+       "id": "cs2-team-5973",
+       "name": "Liquid",
+       "score": 0
+      }
+     ]
+    },
+    {
+     "id": "cs2-match-2393226",
+     "teams": [
+      {
+       "id": "cs2-team-7020",
+       "name": "Spirit",
+       "score": 0
+      },
+      {
+       "id": "cs2-team-11283",
+       "name": "Falcons",
+       "score": 2
+      }
+     ]
+    },
+    {
+     "id": "cs2-match-2393232",
+     "teams": [
+      {
+       "id": "cs2-team-7020",
+       "name": "Spirit",
+       "score": 2
+      },
+      {
+       "id": "cs2-team-7176",
+       "name": "RED Canids",
+       "score": 1
+      }
+     ]
+    },
+    {
+     "id": "cs2-match-2393237",
+     "teams": [
+      {
+       "id": "cs2-team-7020",
+       "name": "Spirit",
+       "score": 2
+      },
+      {
+       "id": "cs2-team-5995",
+       "name": "G2",
+       "score": 0
+      }
+     ]
+    }
+   ],
+   "name": "IEM Rio 2026",
+   "status": "completed"
   },
   "cs2-event-8244": {
+   "checked_at": "2026-10-07T16:53:30Z",
+   "endsAt": "2026-10-11T23:59:59.000Z",
+   "fetched_ids": [],
    "isLan": true,
    "location": "Katowice, Poland",
-   "name": "ESL Pro League Season 24"
+   "matches": [],
+   "name": "ESL Pro League Season 24",
+   "status": "live"
   },
   "cs2-event-8246": {
+   "checked_at": "2026-10-07T16:48:42Z",
+   "endsAt": "2026-01-25T23:59:59.000Z",
+   "fetched_ids": [],
    "isLan": true,
    "location": "Malta",
-   "name": "BLAST Bounty 2026 Season 1 Finals"
+   "matches": [
+    {
+     "id": "cs2-match-2389278",
+     "teams": [
+      {
+       "id": "cs2-team-12467",
+       "name": "PARIVISION",
+       "score": 2
+      },
+      {
+       "id": "cs2-team-7020",
+       "name": "Spirit",
+       "score": 1
+      }
+     ]
+    }
+   ],
+   "name": "BLAST Bounty 2026 Season 1 Finals",
+   "status": "completed"
   },
   "cs2-event-8247": {
+   "checked_at": "2026-10-07T16:46:39Z",
+   "endsAt": "2026-08-02T23:59:59.000Z",
+   "fetched_ids": [],
    "isLan": true,
    "location": "Malta",
-   "name": "BLAST Bounty 2026 Season 2 Finals"
+   "matches": [
+    {
+     "id": "cs2-match-2396020",
+     "teams": [
+      {
+       "id": "cs2-team-6667",
+       "name": "FaZe",
+       "score": 1
+      },
+      {
+       "id": "cs2-team-7020",
+       "name": "Spirit",
+       "score": 2
+      }
+     ]
+    },
+    {
+     "id": "cs2-match-2396021",
+     "teams": [
+      {
+       "id": "cs2-team-7020",
+       "name": "Spirit",
+       "score": 1
+      },
+      {
+       "id": "cs2-team-4494",
+       "name": "MOUZ",
+       "score": 3
+      }
+     ]
+    },
+    {
+     "id": "cs2-match-2396018",
+     "teams": [
+      {
+       "id": "cs2-team-5973",
+       "name": "Liquid",
+       "score": 0
+      },
+      {
+       "id": "cs2-team-7020",
+       "name": "Spirit",
+       "score": 2
+      }
+     ]
+    }
+   ],
+   "name": "BLAST Bounty 2026 Season 2 Finals",
+   "status": "completed"
   },
   "cs2-event-8248": {
+   "checked_at": "2026-10-07T16:47:57Z",
+   "endsAt": "2026-03-29T23:59:59.000Z",
+   "fetched_ids": [],
    "isLan": true,
    "location": "CPH, DK & Rotterdam, NL",
-   "name": "BLAST Open Rotterdam 2026"
+   "matches": [
+    {
+     "id": "cs2-match-2390816",
+     "teams": [
+      {
+       "id": "cs2-team-7020",
+       "name": "Spirit",
+       "score": 2
+      },
+      {
+       "id": "cs2-team-5973",
+       "name": "Liquid",
+       "score": 0
+      }
+     ]
+    },
+    {
+     "id": "cs2-match-2391761",
+     "teams": [
+      {
+       "id": "cs2-team-12467",
+       "name": "PARIVISION",
+       "score": 2
+      },
+      {
+       "id": "cs2-team-7020",
+       "name": "Spirit",
+       "score": 0
+      }
+     ]
+    },
+    {
+     "id": "cs2-match-2391766",
+     "teams": [
+      {
+       "id": "cs2-team-7020",
+       "name": "Spirit",
+       "score": 2
+      },
+      {
+       "id": "cs2-team-9996",
+       "name": "9z",
+       "score": 0
+      }
+     ]
+    },
+    {
+     "id": "cs2-match-2391770",
+     "teams": [
+      {
+       "id": "cs2-team-6248",
+       "name": "The MongolZ",
+       "score": 2
+      },
+      {
+       "id": "cs2-team-7020",
+       "name": "Spirit",
+       "score": 0
+      }
+     ]
+    }
+   ],
+   "name": "BLAST Open Rotterdam 2026",
+   "status": "completed"
   },
   "cs2-event-8249": {
+   "checked_at": "2026-10-07T16:46:16Z",
+   "endsAt": "2026-09-06T23:59:59.000Z",
+   "fetched_ids": [],
    "isLan": true,
    "location": "CPH, DK & Porto, PT",
-   "name": "BLAST Open Porto 2026"
+   "matches": [
+    {
+     "id": "cs2-match-2396949",
+     "teams": [
+      {
+       "id": "cs2-team-7020",
+       "name": "Spirit",
+       "score": 2
+      },
+      {
+       "id": "cs2-team-11283",
+       "name": "Falcons",
+       "score": 0
+      }
+     ]
+    },
+    {
+     "id": "cs2-match-2396951",
+     "teams": [
+      {
+       "id": "cs2-team-7020",
+       "name": "Spirit",
+       "score": 3
+      },
+      {
+       "id": "cs2-team-4494",
+       "name": "MOUZ",
+       "score": 1
+      }
+     ]
+    },
+    {
+     "id": "cs2-match-2396924",
+     "teams": [
+      {
+       "id": "cs2-team-7020",
+       "name": "Spirit",
+       "score": 2
+      },
+      {
+       "id": "cs2-team-13926",
+       "name": "DENDELE",
+       "score": 0
+      }
+     ]
+    },
+    {
+     "id": "cs2-match-2396932",
+     "teams": [
+      {
+       "id": "cs2-team-5995",
+       "name": "G2",
+       "score": 0
+      },
+      {
+       "id": "cs2-team-7020",
+       "name": "Spirit",
+       "score": 2
+      }
+     ]
+    },
+    {
+     "id": "cs2-match-2396943",
+     "teams": [
+      {
+       "id": "cs2-team-7020",
+       "name": "Spirit",
+       "score": 2
+      },
+      {
+       "id": "cs2-team-8297",
+       "name": "FURIA",
+       "score": 0
+      }
+     ]
+    }
+   ],
+   "name": "BLAST Open Porto 2026",
+   "status": "completed"
   },
   "cs2-event-8261": {
+   "checked_at": "2026-10-07T16:46:28Z",
+   "endsAt": "2026-08-23T23:59:59.000Z",
+   "fetched_ids": [
+    "cs2-match-2396606",
+    "cs2-match-2396577",
+    "cs2-match-2396610",
+    "cs2-match-2396612",
+    "cs2-match-2396614",
+    "cs2-match-2396591"
+   ],
    "isLan": true,
    "location": "Paris, France",
-   "name": "Esports World Cup 2026"
+   "matches": [
+    {
+     "id": "cs2-match-2396606",
+     "teams": [
+      {
+       "id": "cs2-team-11241",
+       "name": "B8",
+       "score": 0
+      },
+      {
+       "id": "cs2-team-7020",
+       "name": "Spirit",
+       "score": 2
+      }
+     ]
+    },
+    {
+     "id": "cs2-match-2396610",
+     "teams": [
+      {
+       "id": "cs2-team-9565",
+       "name": "Vitality",
+       "score": 1
+      },
+      {
+       "id": "cs2-team-7020",
+       "name": "Spirit",
+       "score": 2
+      }
+     ]
+    },
+    {
+     "id": "cs2-match-2396612",
+     "teams": [
+      {
+       "id": "cs2-team-12468",
+       "name": "Legacy",
+       "score": 0
+      },
+      {
+       "id": "cs2-team-7020",
+       "name": "Spirit",
+       "score": 2
+      }
+     ]
+    },
+    {
+     "id": "cs2-match-2396614",
+     "teams": [
+      {
+       "id": "cs2-team-13286",
+       "name": "FUT",
+       "score": 1
+      },
+      {
+       "id": "cs2-team-7020",
+       "name": "Spirit",
+       "score": 3
+      }
+     ]
+    },
+    {
+     "id": "cs2-match-2396559",
+     "teams": [
+      {
+       "id": "cs2-team-7020",
+       "name": "Spirit",
+       "score": 10
+      },
+      {
+       "id": "cs2-team-10245",
+       "name": "JiJieHao",
+       "score": 13
+      }
+     ]
+    },
+    {
+     "id": "cs2-match-2396577",
+     "teams": [
+      {
+       "id": "cs2-team-7020",
+       "name": "Spirit",
+       "score": 2
+      },
+      {
+       "id": "cs2-team-6290",
+       "name": "Luminosity",
+       "score": 0
+      }
+     ]
+    },
+    {
+     "id": "cs2-match-2396591",
+     "teams": [
+      {
+       "id": "cs2-team-7532",
+       "name": "BIG",
+       "score": 1
+      },
+      {
+       "id": "cs2-team-7020",
+       "name": "Spirit",
+       "score": 2
+      }
+     ]
+    }
+   ],
+   "name": "Esports World Cup 2026",
+   "status": "completed"
   },
   "cs2-event-8301": {
+   "checked_at": "2026-10-07T16:47:03Z",
+   "endsAt": "2026-06-21T23:59:59.000Z",
+   "fetched_ids": [],
    "isLan": true,
    "location": "Cologne, Germany",
-   "name": "IEM Cologne Major 2026"
+   "matches": [
+    {
+     "id": "cs2-match-2394998",
+     "teams": [
+      {
+       "id": "cs2-team-5995",
+       "name": "G2",
+       "score": 1
+      },
+      {
+       "id": "cs2-team-7020",
+       "name": "Spirit",
+       "score": 2
+      }
+     ]
+    },
+    {
+     "id": "cs2-match-2395001",
+     "teams": [
+      {
+       "id": "cs2-team-7020",
+       "name": "Spirit",
+       "score": 1
+      },
+      {
+       "id": "cs2-team-11283",
+       "name": "Falcons",
+       "score": 2
+      }
+     ]
+    }
+   ],
+   "name": "IEM Cologne Major 2026",
+   "status": "completed"
   },
   "cs2-event-8412": {
+   "checked_at": "2026-10-07T16:48:19Z",
+   "endsAt": "2026-03-10T23:59:59.000Z",
+   "fetched_ids": [],
    "isLan": true,
    "location": "Europe (Online)",
-   "name": "ESL Pro League Season 23 Stage 2"
+   "matches": [],
+   "name": "ESL Pro League Season 23 Stage 2",
+   "status": "completed"
   },
   "cs2-event-8413": {
+   "checked_at": "2026-10-07T16:48:08Z",
+   "endsAt": "2026-03-15T23:59:59.000Z",
+   "fetched_ids": [],
    "isLan": true,
    "location": "Stockholm, Sweden",
-   "name": "ESL Pro League Season 23 Finals"
+   "matches": [
+    {
+     "id": "cs2-match-2391137",
+     "teams": [
+      {
+       "id": "cs2-team-6665",
+       "name": "Astralis",
+       "score": 2
+      },
+      {
+       "id": "cs2-team-7020",
+       "name": "Spirit",
+       "score": 0
+      }
+     ]
+    }
+   ],
+   "name": "ESL Pro League Season 23 Finals",
+   "status": "completed"
   },
   "cs2-event-8876": {
+   "checked_at": "2026-10-07T16:48:54Z",
+   "endsAt": "2026-01-18T23:59:59.000Z",
+   "fetched_ids": [],
    "isLan": true,
    "location": "Europe (Online)",
-   "name": "BLAST Bounty 2026 Season 1"
+   "matches": [
+    {
+     "id": "cs2-match-2389272",
+     "teams": [
+      {
+       "id": "cs2-team-13117",
+       "name": "Inner Circle",
+       "score": 0
+      },
+      {
+       "id": "cs2-team-7020",
+       "name": "Spirit",
+       "score": 2
+      }
+     ]
+    },
+    {
+     "id": "cs2-match-2389265",
+     "teams": [
+      {
+       "id": "cs2-team-10577",
+       "name": "SINNERS",
+       "score": 0
+      },
+      {
+       "id": "cs2-team-7020",
+       "name": "Spirit",
+       "score": 2
+      }
+     ]
+    }
+   ],
+   "name": "BLAST Bounty 2026 Season 1",
+   "status": "completed"
   },
   "cs2-event-9029": {
+   "checked_at": "2026-10-07T16:47:15Z",
+   "endsAt": "2026-06-09T23:59:59.000Z",
+   "fetched_ids": [],
    "isLan": true,
    "location": "Cologne, Germany",
-   "name": "IEM Cologne Major 2026 Stage 2"
+   "matches": [],
+   "name": "IEM Cologne Major 2026 Stage 2",
+   "status": "completed"
   },
   "cs2-event-9154": {
+   "checked_at": "2026-10-07T16:46:51Z",
+   "endsAt": "2026-07-26T23:59:59.000Z",
+   "fetched_ids": [],
    "isLan": true,
    "location": "Europe (Online)",
-   "name": "BLAST Bounty 2026 Season 2"
+   "matches": [
+    {
+     "id": "cs2-match-2396014",
+     "teams": [
+      {
+       "id": "cs2-team-8474",
+       "name": "100 Thieves",
+       "score": 1
+      },
+      {
+       "id": "cs2-team-7020",
+       "name": "Spirit",
+       "score": 2
+      }
+     ]
+    },
+    {
+     "id": "cs2-match-2396006",
+     "teams": [
+      {
+       "id": "cs2-team-10503",
+       "name": "OG",
+       "score": 1
+      },
+      {
+       "id": "cs2-team-7020",
+       "name": "Spirit",
+       "score": 2
+      }
+     ]
+    }
+   ],
+   "name": "BLAST Bounty 2026 Season 2",
+   "status": "completed"
   }
  },
  "matches": [
@@ -1840,35 +2564,117 @@
   },
   {
    "bestof": 3,
-   "data_note": "结果未更新（已过开赛时间 12 小时以上，可能延期或取消）",
+   "data_note": "",
    "duration_hours": 2.5,
-   "finished": false,
+   "finished": true,
    "key": "b5b7bdfd054dd800",
    "left": "Luminosity",
    "location": "Paris, France",
    "maps": [],
    "right": "Spirit",
-   "score": null,
+   "score": [
+    0,
+    2
+   ],
    "source_id": "cs2-match-2396577",
    "start": "2026-08-13T11:00:00+00:00",
-   "status": "unresolved",
+   "status": "completed",
+   "tournament": "Esports World Cup 2026"
+  },
+  {
+   "bestof": 3,
+   "data_note": "",
+   "duration_hours": 2.5,
+   "finished": true,
+   "key": "dcd09728c06baffc",
+   "left": "BIG",
+   "location": "Paris, France",
+   "maps": [],
+   "right": "Spirit",
+   "score": [
+    1,
+    2
+   ],
+   "source_id": "manual:2026-08-15:BIG-Spirit",
+   "start": "2026-08-15T15:11:00+00:00",
+   "status": "completed",
    "tournament": "Esports World Cup 2026"
   },
   {
    "bestof": null,
-   "data_note": "结果未更新（已过开赛时间 12 小时以上，可能延期或取消）",
+   "data_note": "",
    "duration_hours": 2.0,
-   "finished": false,
+   "finished": true,
    "key": "588ea193607533b5",
    "left": "B8",
    "location": "",
    "maps": [],
    "right": "Spirit",
-   "score": null,
+   "score": [
+    0,
+    2
+   ],
    "source_id": "cs2-match-2396606",
    "start": "2026-08-20T13:55:00+00:00",
-   "status": "unresolved",
+   "status": "completed",
    "tournament": "未知赛事"
+  },
+  {
+   "bestof": 3,
+   "data_note": "",
+   "duration_hours": 2.5,
+   "finished": true,
+   "key": "952ad1f928661d2a",
+   "left": "Vitality",
+   "location": "Paris, France",
+   "maps": [],
+   "right": "Spirit",
+   "score": [
+    1,
+    2
+   ],
+   "source_id": "manual:2026-08-21:Vitality-Spirit",
+   "start": "2026-08-21T13:37:00+00:00",
+   "status": "completed",
+   "tournament": "Esports World Cup 2026"
+  },
+  {
+   "bestof": 3,
+   "data_note": "",
+   "duration_hours": 2.5,
+   "finished": true,
+   "key": "6fb87009d1350997",
+   "left": "Legacy",
+   "location": "Paris, France",
+   "maps": [],
+   "right": "Spirit",
+   "score": [
+    0,
+    2
+   ],
+   "source_id": "manual:2026-08-22:Legacy-Spirit",
+   "start": "2026-08-22T15:02:00+00:00",
+   "status": "completed",
+   "tournament": "Esports World Cup 2026"
+  },
+  {
+   "bestof": 5,
+   "data_note": "",
+   "duration_hours": 4.0,
+   "finished": true,
+   "key": "6ea4af4930d3f94b",
+   "left": "FUT",
+   "location": "Paris, France",
+   "maps": [],
+   "right": "Spirit",
+   "score": [
+    1,
+    3
+   ],
+   "source_id": "manual:2026-08-23:FUT-Spirit",
+   "start": "2026-08-23T09:16:00+00:00",
+   "status": "completed",
+   "tournament": "Esports World Cup 2026"
   },
   {
    "bestof": 3,
@@ -2260,7 +3066,7 @@
    "right": "M80",
    "score": null,
    "source_id": "cs2-match-2398749",
-   "start": "2026-10-07T17:00:00+00:00",
+   "start": "2026-10-07T17:45:00+00:00",
    "status": "upcoming",
    "tournament": "ESL Pro League Season 24"
   }

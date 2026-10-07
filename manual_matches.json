@@ -1,0 +1,53 @@
+{
+  "_comment": [
+    "人工补录的比赛：数据源（Cito）的队伍接口没有收录、且比赛详情接口返回 404（拿不到开赛时间）的已完赛场次。",
+    "仅放【已完赛】的比赛，避免过时数据污染日历。",
+    "比分来自 Cito 赛事详情的对阵结构（Esports World Cup 2026, cs2-event-8261）；",
+    "日期与开赛时间来自 2026 年该队赛程记录（已与赛事结构比分逐场核对一致）。",
+    "逐地图比分在这些场次的接口里取不到，因此备注会写明「地图比分：数据缺失」。",
+    "字段：date(UTC ISO) / left / right / score[主,客] / bestof / tournament / location / note",
+    "键名与 Cito 保持一致（队名用 Spirit、BIG、Vitality、Legacy、FUT）"
+  ],
+  "matches": [
+    {
+      "date": "2026-08-15T15:11:00Z",
+      "left": "BIG",
+      "right": "Spirit",
+      "score": [1, 2],
+      "bestof": 3,
+      "tournament": "Esports World Cup 2026",
+      "location": "Paris, France",
+      "note": "赛事结构比分 1-2"
+    },
+    {
+      "date": "2026-08-21T13:37:00Z",
+      "left": "Vitality",
+      "right": "Spirit",
+      "score": [1, 2],
+      "bestof": 3,
+      "tournament": "Esports World Cup 2026",
+      "location": "Paris, France",
+      "note": "赛事结构比分 1-2"
+    },
+    {
+      "date": "2026-08-22T15:02:00Z",
+      "left": "Legacy",
+      "right": "Spirit",
+      "score": [0, 2],
+      "bestof": 3,
+      "tournament": "Esports World Cup 2026",
+      "location": "Paris, France",
+      "note": "赛事结构比分 0-2"
+    },
+    {
+      "date": "2026-08-23T09:16:00Z",
+      "left": "FUT",
+      "right": "Spirit",
+      "score": [1, 3],
+      "bestof": 5,
+      "tournament": "Esports World Cup 2026",
+      "location": "Paris, France",
+      "note": "决赛；赛事结构比分 1-3（公开报道为 3-1 胜 FUT）"
+    }
+  ]
+}
