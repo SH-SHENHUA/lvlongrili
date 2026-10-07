@@ -1,0 +1,4 @@
+# matches.ics 是给 iPhone 导入的产物，RFC 5545 要求 CRLF 行尾。
+# 禁止 Git 对它做任何行尾转换（本机 core.autocrlf=true 会把它改成 LF），
+# 保证仓库里的字节和 validate_ics.py 校验过的完全一致。
+*.ics -text

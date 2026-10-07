@@ -1,0 +1,48 @@
+name: Generate Team Spirit CS2 Calendar
+
+on:
+  push:
+    branches: [ main ]
+  schedule:
+    # 每天一次：03:00 UTC = 北京时间 11:00
+    - cron: '0 3 * * *'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+
+      - name: Run script
+        env:
+          # Liquipedia 免费 API key，请在仓库 Settings -> Secrets 里添加同名 Secret
+          LIQUIPEDIA_API_KEY: ${{ secrets.LIQUIPEDIA_API_KEY }}
+          # 可选：User-Agent 里带上联系方式（Liquipedia 条款要求）
+          LIQUIPEDIA_USER_AGENT: ${{ secrets.LIQUIPEDIA_USER_AGENT }}
+        run: python generate.py
+
+      - name: Validate ics for iPhone import
+        run: python validate_ics.py matches.ics
+
+      - name: Commit generated ics file
+        run: |
+          git config --global user.name "github-actions[bot]"
+          git config --global user.email "github-actions[bot]@users.noreply.github.com"
+          git add matches.ics
+          git diff --quiet && git diff --staged --quiet || git commit -m "auto update calendar"
+          git push
