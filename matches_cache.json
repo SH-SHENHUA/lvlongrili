@@ -1,5 +1,5 @@
 {
- "count": 59,
+ "count": 60,
  "event_locations": {
   "cs2-event-8049": {
    "checked_at": "2026-10-07T16:47:27Z",
@@ -3058,15 +3058,53 @@
    "bestof": 3,
    "data_note": "",
    "duration_hours": 2.5,
-   "finished": false,
+   "finished": true,
    "key": "c430413a9395e628",
    "left": "Spirit",
    "location": "Katowice, Poland",
-   "maps": [],
+   "maps": [
+    {
+     "map": "Dust2",
+     "note": "",
+     "number": 1,
+     "scores": [
+      13,
+      6
+     ]
+    },
+    {
+     "map": "Cache",
+     "note": "",
+     "number": 2,
+     "scores": [
+      13,
+      10
+     ]
+    }
+   ],
    "right": "M80",
-   "score": null,
+   "score": [
+    2,
+    0
+   ],
    "source_id": "cs2-match-2398749",
-   "start": "2026-10-07T17:45:00+00:00",
+   "start": "2026-10-07T18:05:00+00:00",
+   "status": "completed",
+   "tournament": "ESL Pro League Season 24"
+  },
+  {
+   "bestof": 3,
+   "data_note": "",
+   "duration_hours": 2.5,
+   "finished": false,
+   "key": "1eb13ff6826b7809",
+   "left": "Falcons",
+   "location": "Katowice, Poland",
+   "maps": [],
+   "right": "Spirit",
+   "score": null,
+   "source_id": "cs2-match-2398753",
+   "start": "2026-10-09T16:00:00+00:00",
    "status": "upcoming",
    "tournament": "ESL Pro League Season 24"
   }
