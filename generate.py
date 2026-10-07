@@ -359,6 +359,14 @@ def _structure_matches(structure, team_ids: set) -> list:
     return list(found.values())
 
 
+def _same_event_entry(previous: dict, fresh: dict) -> bool:
+    """赛事详情是否与缓存里的一致（忽略 checked_at，避免无意义提交）。"""
+    keys = ("name", "location", "isLan", "status", "endsAt", "matches")
+    if any(previous.get(key) != fresh.get(key) for key in keys):
+        return False
+    return set(previous.get("fetched_ids") or []) == set(fresh.get("fetched_ids") or [])
+
+
 def _event_needs_refresh(entry: dict | None) -> bool:
     """赛事详情是否需要（重新）拉取：没缓存过、赛事可能仍在进行、或缓存太旧。"""
     if not entry:
@@ -413,9 +421,12 @@ def event_locations(records: list, cached: dict | None = None) -> dict:
             "endsAt": data.get("endsAt"),
             "checked_at": _now_utc().strftime("%Y-%m-%dT%H:%M:%SZ"),
             # 已处理过的补充比赛 id 要保留，避免每天重复查详情
-            "fetched_ids": list(previous.get("fetched_ids") or []),
+            "fetched_ids": sorted(set(previous.get("fetched_ids") or [])),
             "matches": _structure_matches(data.get("eventStructure"), _team_ids()),
         }
+        if _same_event_entry(previous, entry):
+            # 内容没变：保留原条目（含 checked_at），避免每周刷新产生一次无意义提交
+            continue
         locations[event_id] = entry
     return locations
 
@@ -543,7 +554,7 @@ def _supplement_from_structures(records: list, locations: dict, events: list) ->
             except requests.HTTPError as exc:
                 status = exc.response.status_code if exc.response is not None else "?"
                 # 记下来，避免每天都重试同一场：结构里有、但比赛详情取不到（实测 404）
-                entry.setdefault("fetched_ids", []).append(match_id)
+                entry["fetched_ids"] = sorted(set(entry.get("fetched_ids") or []) | {match_id})
                 if status == 404:
                     print(f"[cito] 赛事对阵结构里的 {match_id} 在比赛接口取不到（404），"
                           f"无法确定开赛时间，暂不加入日历")
@@ -553,7 +564,7 @@ def _supplement_from_structures(records: list, locations: dict, events: list) ->
             detail = payload.get("data") if isinstance(payload, dict) else payload
             if not isinstance(detail, dict):
                 continue
-            entry.setdefault("fetched_ids", []).append(match_id)
+            entry["fetched_ids"] = sorted(set(entry.get("fetched_ids") or []) | {match_id})
             event = normalize(detail, location=str(entry.get("location") or ""))
             if event is None:
                 continue
