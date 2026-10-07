@@ -114,12 +114,36 @@ def _api_get(path: str, params: dict | None = None):
     return resp.json()
 
 
-def fetch_matches() -> list:
-    """列出该年与本队相关的 CS2 比赛（含分页）。"""
+def resolve_team() -> dict | None:
+    """先用队伍名搜索拿到队伍记录（含 id）。
+
+    matches 接口的 team 参数在规范里只写了 type: string，没说清是名字还是 ID，
+    所以这里先把 id 查出来，之后按 id 查、不行再按名字查。
+    """
+    try:
+        payload = _api_get("/csgo/api/v2/teams/", {"search": TEAM, "limit": 50})
+    except (requests.HTTPError, SystemExit) as exc:
+        print(f"[bzzoiro] 队伍搜索失败，将直接用队名查询：{exc}")
+        return None
+    results = payload.get("results") if isinstance(payload, dict) else payload
+    results = results or []
+    exact = [t for t in results
+             if str((t or {}).get("name", "")).strip().lower() == TEAM.lower()]
+    pick = exact[0] if exact else (results[0] if results else None)
+    if pick:
+        print(f"[bzzoiro] 队伍搜索命中：{pick.get('name')}（id={pick.get('id')}，"
+              f"候选 {len(results)} 个）")
+    else:
+        print(f"[bzzoiro] 队伍搜索没有结果，将直接用队名查询")
+    return pick
+
+
+def fetch_matches(team_ref: str) -> list:
+    """按给定的队伍引用（id 或名字）列出该年的 CS2 比赛（含分页）。"""
     results, offset = [], 0
     for page in range(MAX_PAGES):
         payload = _api_get("/csgo/api/v2/matches/", {
-            "team": TEAM,
+            "team": team_ref,
             "date_from": f"{YEAR}-01-01",
             "date_to": f"{YEAR}-12-31",
             "limit": PAGE_SIZE,
@@ -127,12 +151,33 @@ def fetch_matches() -> list:
         })
         batch = payload.get("results") if isinstance(payload, dict) else payload
         batch = batch or []
-        print(f"[bzzoiro] 第 {page + 1} 页取到 {len(batch)} 条（累计 {len(results) + len(batch)}）")
+        print(f"[bzzoiro] team={team_ref} 第 {page + 1} 页取到 {len(batch)} 条"
+              f"（累计 {len(results) + len(batch)}）")
         results.extend(batch)
         if len(batch) < PAGE_SIZE:
             break
         offset += PAGE_SIZE
     return results
+
+
+def fetch_matches_any_ref(team: dict | None) -> list:
+    """先按队伍 id 查，结果为空再按队名查（两种语义都试，避免过滤参数不被支持）。"""
+    refs = []
+    if team and team.get("id") is not None:
+        refs.append(str(team["id"]))
+    refs.append(TEAM)
+
+    for ref in dict.fromkeys(refs):
+        records = fetch_matches(ref)
+        if records:
+            involved = sum(1 for r in records if _matches_team(r))
+            print(f"[bzzoiro] team={ref} 返回 {len(records)} 条，其中与本队相关 {involved} 条")
+            if involved == 0:
+                print(f"[bzzoiro] 警告：这一批里没有 {TEAM}，team 过滤可能未生效；"
+                      f"将继续尝试下一种写法")
+                continue
+            return records
+    return []
 
 
 def _matches_team(record: dict) -> bool:
@@ -233,7 +278,8 @@ def normalize(record: dict, detail: dict | None = None) -> dict | None:
 
 
 def collect_events() -> tuple[list, str]:
-    records = fetch_matches()
+    team = resolve_team()
+    records = fetch_matches_any_ref(team)
     print(f"[bzzoiro] 列表共取到 {len(records)} 条")
 
     events, skipped_team, skipped_date, duplicates = [], 0, 0, 0
