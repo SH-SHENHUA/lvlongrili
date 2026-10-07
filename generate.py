@@ -282,15 +282,28 @@ def collect_events() -> tuple[list, str]:
     records = fetch_matches_any_ref(team)
     print(f"[bzzoiro] 列表共取到 {len(records)} 条")
 
-    events, skipped_team, skipped_date, duplicates = [], 0, 0, 0
+    events, skipped_team, skipped_year, skipped_time, duplicates = [], 0, 0, 0, 0
+    missing_time = []
     seen = set()
     for record in records:
         if not _matches_team(record):
             skipped_team += 1
             continue
+        start = _parse_dt(_pick(record, "start_time", "date", "start_date"))
+        if start is None:
+            # 没有开赛时间就无法生成日程，必须明确报出来，避免"比赛凭空少了"而无人察觉
+            skipped_time += 1
+            if len(missing_time) < 5:
+                missing_time.append(
+                    f"{_team_name(record.get('home_team'))} vs {_team_name(record.get('away_team'))}"
+                    f"（id={record.get('id')}）")
+            continue
+        if start.year != YEAR:
+            skipped_year += 1
+            continue
         event = normalize(record)
         if event is None:
-            skipped_date += 1
+            skipped_year += 1
             continue
         if not event["key"] or event["key"] in seen:
             duplicates += 1
@@ -317,15 +330,22 @@ def collect_events() -> tuple[list, str]:
     if not events:
         raise SystemExit(
             f"错误：没有取到 {TEAM} 在 {YEAR} 年的任何比赛，拒绝写出空日历。\n"
-            f"原始记录 {len(records)} 条（非本队 {skipped_team}、日期不符或缺失 {skipped_date}、"
-            f"重复 {duplicates}）。请检查 key / 年份 / 队名配置。"
+            f"原始记录 {len(records)} 条（非本队 {skipped_team}、年份不符 {skipped_year}、"
+            f"缺少开赛时间 {skipped_time}、重复 {duplicates}）。"
+            f"请检查 key / 年份 / 队名配置。"
         )
 
     events.sort(key=lambda e: e["start"])
     finished_count = sum(1 for e in events if e["finished"])
     print(f"[bzzoiro] 有效比赛 {len(events)} 场（已结束 {finished_count} 场，"
           f"未进行 {len(events) - finished_count} 场；"
-          f"过滤掉 非本队 {skipped_team} / 日期不符 {skipped_date} / 重复 {duplicates}）")
+          f"过滤掉 非本队 {skipped_team} / 年份不符 {skipped_year} / "
+          f"缺少开赛时间 {skipped_time} / 重复 {duplicates}）")
+    if skipped_time:
+        print(f"[bzzoiro] 警告：有 {skipped_time} 场比赛因为接口没有给开赛时间而被跳过，"
+              f"这些场次不会出现在日历里：")
+        for item in missing_time:
+            print(f"         {item}")
 
     note = f"数据来源：bzzoiro CS2 API（sports.bzzoiro.com）"
     print(f"[覆盖] {note}")
