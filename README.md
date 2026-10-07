@@ -26,7 +26,11 @@
 - 每个事件的 `UID` 由比赛 ID 稳定派生，**导入到同一个日历时是更新事件，不会产生重复条目**
 - GitHub Actions **每天**自动更新一次（03:00 UTC = 北京时间 11:00）
 
-## 数据来源：Cito API 的 CS2 接口（免费档 500 次/月）
+## 数据源：可选 Cito（默认）或 Liquipedia
+
+脚本内置两个数据源，用环境变量 `SOURCE` 切换（`cito` / `liquipedia`），字段映射见下。
+
+### 源 A：Cito API 的 CS2 接口（默认，免费档 500 次/月）
 
 数据来自 [cs2-api.org](https://cs2-api.org)（Cito API）的 CS2 接口。
 文档明确写着覆盖「**results with every map score**（每一张地图的比分）」，索引约 1.5 万场比赛。
@@ -102,13 +106,53 @@ Cito 各档的**历史深度**不同（见[定价页](https://cs2-api.org/pricin
 2. 在控制台复制 API key
 3. 在仓库 `Settings → Secrets and variables → Actions` 新增 Secret：**`CITO_API_KEY`**
 
+### 源 B：Liquipedia LPDB v3（全量历史，可完整回填）
+
+Cito 免费档只有 30 天历史，因此 2026 年较早的比赛无法回填。Liquipedia 的 LPDB
+有全量历史与逐地图数据（`match2games`），可以补上：
+
+```
+GET https://api.liquipedia.net/api/v3/match
+  ?wiki=counterstrike
+  &conditions=[[date::>2025-12-31]] AND [[date::<2027-01-01]] AND [[match2opponents::"Team Spirit"]]
+  &limit=250&offset=0&order=date ASC
+Header: Authorization: Apikey <你的key>
+```
+
+字段映射：`tournament`（+`section`）→ 比赛名称；`match2opponents` → 双方与系列赛比分；
+`match2games` → 逐地图比分；`date`（UTC）→ 开赛时间；`bestof` → 时长；`finished` → 是否已结束。
+
+启用方式：设 `SOURCE=liquipedia`，并把 key 加到 Secret：**`LIQUIPEDIA_API_KEY`**。
+他们的条款要求 User-Agent 写明用途与联系方式，脚本默认已带（可用 `LIQUIPEDIA_USER_AGENT` 覆盖）。
+
+> key 申请：Liquipedia 的 key 免费，但需要通过加入他们的 **Discord** 申请
+> （其条款页从本环境访问被 Cloudflare 拦截，具体步骤以其站内说明为准）。
+> 条件写法可能有多种，脚本会按 `match2opponents` → `opponent` → 仅时间窗 的顺序自动尝试，
+> 并在日志里写明最终采用哪一种。
+
+### 源选择对比
+
+| | 源 A：Cito（免费档） | 源 B：Liquipedia |
+| --- | --- | --- |
+| 历史深度 | 最近 30 天 | 全量 |
+| 逐地图比分 | ✅ `maps[]`（含上下半场） | ✅ `match2games` |
+| 拿 key | 邮箱注册，1 分钟 | 需加入 Discord 申请 |
+| 每天请求 | 2 次 | 1–2 次 |
+
+用 `SOURCE` 切换即可，两种源产出的日历格式完全一致，也都受下面的累积缓存保护。
+
 ## 可调配置（环境变量）
 
 | 变量 | 默认 | 说明 |
 | --- | --- | --- |
-| `CITO_API_KEY` | 无（**必填**） | API key |
+| `SOURCE` | `cito` | 数据源：`cito` 或 `liquipedia` |
+| `CITO_API_KEY` | 无（`SOURCE=cito` 时必填） | Cito API key |
+| `LIQUIPEDIA_API_KEY` | 无（`SOURCE=liquipedia` 时必填） | Liquipedia API key |
+| `LIQUIPEDIA_USER_AGENT` | 带用途与联系方式的默认值 | Liquipedia 条款要求 |
+| `LIQUIPEDIA_WIKI` | `counterstrike` | Liquipedia wiki |
 | `TEAM_SLUG` | `spirit` | 队伍 slug（如 `vitality`、`natus-vincere`），也接受 id。**这是取数据用的关键配置** |
 | `TEAM_NAME` | `Team Spirit` | 仅用于**日历显示名**与过滤兜底。脚本会从接口返回数据里自识别本队名（例如接口把 Team Spirit 叫 `Spirit`），因此两者不一致也不会丢比赛 |
+| `TEAM_ALIASES` | 空 | 可选，额外的队名写法（逗号分隔），用于 Liquipedia 查询条件与过滤 |
 | `YEAR` | `2026` | 只取该自然年的比赛 |
 | `REQUEST_DELAY` | `0.5` | 请求间隔秒数 |
 | `OUTPUT_FILE` | `matches.ics` | 输出文件名 |

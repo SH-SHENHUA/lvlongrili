@@ -30,8 +30,14 @@ jobs:
 
       - name: Run script
         env:
-          # Cito 的 API key，请在仓库 Settings -> Secrets 里添加同名 Secret
+          # 数据源：cito（默认）或 liquipedia。可在仓库 Variables 里设 SOURCE 覆盖
+          SOURCE: ${{ vars.SOURCE || 'cito' }}
+          # Cito 的 API key（Settings -> Secrets）
           CITO_API_KEY: ${{ secrets.CITO_API_KEY }}
+          # Liquipedia 的 API key（仅 SOURCE=liquipedia 时需要）
+          LIQUIPEDIA_API_KEY: ${{ secrets.LIQUIPEDIA_API_KEY }}
+          # 可选：Liquipedia 条款要求 User-Agent 写明用途与联系方式
+          LIQUIPEDIA_USER_AGENT: ${{ secrets.LIQUIPEDIA_USER_AGENT }}
         run: python generate.py
 
       - name: Validate ics for iPhone import

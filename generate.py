@@ -16,13 +16,30 @@ from datetime import datetime, timedelta, timezone
 import requests
 
 # ==========配置区域==========
+# 数据源：cito（默认，免费档 500 次/月但只有最近 30 天历史）或 liquipedia（全量历史，需 key）
+SOURCE = (os.environ.get("SOURCE") or "cito").strip().lower()
+
+# --- Cito（默认源）---
 # Cito 的 API key（必填）。到 https://citoapi.com/signup?game=cs2 免费注册（500 次/月）。
 API_KEY = (os.environ.get("CITO_API_KEY") or "").strip()
 API_BASE = (os.environ.get("CITO_API_BASE") or "https://api.citoapi.com/api/v1").rstrip("/")
 
+# --- Liquipedia（备选源）---
+LIQUIPEDIA_API_KEY = (os.environ.get("LIQUIPEDIA_API_KEY") or "").strip()
+LIQUIPEDIA_BASE = (os.environ.get("LIQUIPEDIA_BASE")
+                   or "https://api.liquipedia.net/api/v3").rstrip("/")
+LIQUIPEDIA_WIKI = (os.environ.get("LIQUIPEDIA_WIKI") or "counterstrike").strip()
+# 他们的条款要求 User-Agent 写明用途与联系方式
+LIQUIPEDIA_USER_AGENT = (os.environ.get("LIQUIPEDIA_USER_AGENT")
+                         or "lvlongrili-calendar/1.0 "
+                            "(https://github.com/SH-SHENHUA/lvlongrili; contact: sfc100520@163.com)")
+
 # Team Spirit 在 Cito 里的 slug（接口也接受 id，如 cs2-team-7020）。
 TEAM_SLUG = (os.environ.get("TEAM_SLUG") or "spirit").strip()
 TEAM_NAME = (os.environ.get("TEAM_NAME") or "Team Spirit").strip()
+# 可选：额外的队名写法（逗号分隔），用于 Liquipedia 条件与过滤兜底
+TEAM_ALIASES = [item.strip() for item in (os.environ.get("TEAM_ALIASES") or "").split(",")
+                if item.strip()]
 YEAR = int(os.environ.get("YEAR") or 2026)
 PAGE_SIZE = 250
 MAX_PAGES = 4
@@ -275,7 +292,7 @@ def normalize(record: dict) -> dict | None:
     }
 
 
-def collect_events() -> tuple[list, str]:
+def _collect_cito() -> tuple[list, str]:
     resolve_team()
     records = fetch_matches()
     print(f"[cito] 列表共取到 {len(records)} 条")
@@ -343,6 +360,210 @@ def collect_events() -> tuple[list, str]:
     note = "数据来源：Cito API（cs2-api.org）"
     print(f"[覆盖] {note}")
     return events, note
+
+
+# ---------- 数据源：Liquipedia LPDB v3（备选）----------
+# 用途：Cito 免费档只有最近 30 天历史，无法回填 2026 年较早的比赛；
+# Liquipedia 的 LPDB 有全量历史与逐地图数据（match2games），可以补上这一段。
+# 代价：key 需要通过加入他们的 Discord 申请，且条款要求 User-Agent 写明用途与联系方式。
+
+def _lp_api_get(params: dict):
+    if not LIQUIPEDIA_API_KEY:
+        raise SystemExit(
+            "错误：缺少 LIQUIPEDIA_API_KEY（当前 SOURCE=liquipedia）。\n"
+            "Liquipedia 的 API key 免费，但需要加入他们的 Discord 申请（见 README），\n"
+            "拿到后在仓库 Settings → Secrets 里加同名 Secret。"
+        )
+    headers = {"Authorization": f"Apikey {LIQUIPEDIA_API_KEY}",
+               "User-Agent": LIQUIPEDIA_USER_AGENT,
+               "Accept": "application/json"}
+    resp = requests.get(f"{LIQUIPEDIA_BASE}/match", headers=headers, params=params, timeout=40)
+    if resp.status_code in (401, 403):
+        raise SystemExit(
+            f"错误：Liquipedia 拒绝了请求（HTTP {resp.status_code}）。\n"
+            f"常见原因：key 无效/未生效，或 User-Agent 未按要求写明用途与联系方式。"
+        )
+    resp.raise_for_status()
+    time.sleep(REQUEST_DELAY_SECONDS)
+    payload = resp.json()
+    return payload.get("result") or payload.get("data") or []
+
+
+def _lp_candidate_conditions() -> list:
+    """按队伍筛选的条件写法有多种，逐个试，取第一个有结果的。"""
+    window = f"[[date::>{YEAR - 1}-12-31]] AND [[date::<{YEAR + 1}-01-01]]"
+    names = [TEAM_NAME] + list(TEAM_ALIASES)
+    candidates = []
+    for name in names:
+        candidates.append(f'{window} AND [[match2opponents::"{name}"]]')
+        candidates.append(f'{window} AND [[opponent::"{name}"]]')
+    candidates.append(window)  # 兜底：只按时间窗查，再在本地按队名过滤
+    return candidates
+
+
+def _lp_participants(record: dict) -> list:
+    out = []
+    for item in record.get("match2opponents") or []:
+        if not isinstance(item, dict):
+            continue
+        name = str(item.get("name") or item.get("template") or "").strip()
+        out.append({"name": name, "score": _as_int(item.get("score"))})
+    return out
+
+
+def _lp_games(record: dict) -> list:
+    rows = []
+    for game in record.get("match2games") or []:
+        if not isinstance(game, dict):
+            continue
+        name = str(game.get("map") or game.get("mapname") or game.get("map_name") or "").strip()
+        scores = []
+        for side in game.get("opponents") or []:
+            scores.append(_as_int(side.get("score")) if isinstance(side, dict) else _as_int(side))
+        if len(scores) < 2:
+            raw = game.get("scores")
+            if isinstance(raw, (list, tuple)) and len(raw) >= 2:
+                scores = [_as_int(raw[0]), _as_int(raw[1])]
+        if not name and not any(s is not None for s in scores):
+            continue
+        rows.append({
+            "map": name or "?",
+            "scores": [scores[0] if scores else None, scores[1] if len(scores) > 1 else None],
+            "number": _as_int(game.get("order")) or len(rows) + 1,
+            "note": "（弃权）" if str(game.get("resulttype") or "").lower() == "forfeit" else "",
+            "length": game.get("length"),
+        })
+    rows.sort(key=lambda row: row["number"])
+    return rows
+
+
+def _lp_normalize(record: dict) -> dict | None:
+    start = _parse_dt(record.get("date"))
+    if start is None or start.year != YEAR:
+        return None
+    participants = _lp_participants(record)
+    if len(participants) < 2:
+        return None
+    left, right = participants[0], participants[1]
+
+    finished = bool(_as_int(record.get("finished"))) or \
+        str(record.get("status") or "").lower() in ("finished", "completed")
+    score_left, score_right = left["score"], right["score"]
+    if finished and (score_left is None or score_right is None):
+        finished = False  # 没有比分就不按「已结束」渲染
+
+    bestof = _as_int(record.get("bestof"))
+    duration = BO_DURATION_HOURS.get(bestof, DEFAULT_DURATION_HOURS)
+
+    title = str(record.get("tournament") or "").strip() or "未知赛事"
+    section = str(record.get("section") or record.get("series") or "").strip()
+    if section and section.lower() not in title.lower():
+        title = f"{title} - {section}"
+
+    return {
+        "key": str(record.get("match2id") or record.get("objectname") or "").strip(),
+        "start": start,
+        "duration": timedelta(hours=duration),
+        "left": left["name"],
+        "right": right["name"],
+        "score": (score_left, score_right) if finished else None,
+        "finished": finished,
+        "bestof": bestof,
+        "tournament": title,
+        "maps": _lp_games(record) if finished else [],
+        "status": str(record.get("status") or ("finished" if finished else "upcoming")),
+    }
+
+
+def _collect_liquipedia() -> tuple[list, str]:
+    records = []
+    used_conditions = ""
+    for conditions in _lp_candidate_conditions():
+        collected, offset = [], 0
+        for page in range(MAX_PAGES):
+            batch = _lp_api_get({"wiki": LIQUIPEDIA_WIKI, "conditions": conditions,
+                                 "limit": PAGE_SIZE, "offset": offset, "order": "date ASC"})
+            print(f"[liquipedia] 条件={conditions} 第 {page + 1} 页取到 {len(batch)} 条")
+            collected.extend(batch)
+            if len(batch) < PAGE_SIZE:
+                break
+            offset += PAGE_SIZE
+        if any(_lp_team_in(r) for r in collected):
+            records, used_conditions = collected, conditions
+            break
+        if collected:
+            print(f"[liquipedia] 该条件取到 {len(collected)} 条但没有本队，换下一种写法")
+    if not records:
+        print("[liquipedia] 警告：所有查询条件都没有取到本队比赛")
+    else:
+        print(f"[liquipedia] 采用条件：{used_conditions}")
+
+    events, skipped_team, skipped_year, skipped_time, duplicates = [], 0, 0, 0, 0
+    missing_time = []
+    seen = set()
+    for record in records:
+        if not _lp_team_in(record):
+            skipped_team += 1
+            continue
+        start = _parse_dt(record.get("date"))
+        if start is None:
+            skipped_time += 1
+            if len(missing_time) < 5:
+                names = [p["name"] for p in _lp_participants(record)]
+                missing_time.append(f"{' vs '.join(names)}（id={record.get('match2id')}）")
+            continue
+        if start.year != YEAR:
+            skipped_year += 1
+            continue
+        event = _lp_normalize(record)
+        if event is None:
+            skipped_year += 1
+            continue
+        if not event["key"] or event["key"] in seen:
+            duplicates += 1
+            continue
+        seen.add(event["key"])
+        events.append(event)
+
+    events.sort(key=lambda e: e["start"])
+    finished_count = sum(1 for e in events if e["finished"])
+    with_maps = sum(1 for e in events if e["finished"] and e["maps"])
+    print(f"[liquipedia] 有效比赛 {len(events)} 场（已结束 {finished_count} 场，其中带逐地图比分 "
+          f"{with_maps} 场；未进行 {len(events) - finished_count} 场；"
+          f"过滤掉 非本队 {skipped_team} / 年份不符 {skipped_year} / "
+          f"缺少开赛时间 {skipped_time} / 重复 {duplicates}）")
+    if skipped_time:
+        print(f"[liquipedia] 警告：有 {skipped_time} 场比赛因为接口没有给开赛时间而被跳过：")
+        for item in missing_time:
+            print(f"         {item}")
+
+    note = f"数据来源：Liquipedia LPDB v3（{LIQUIPEDIA_WIKI}）"
+    print(f"[覆盖] {note}")
+    return events, note
+
+
+def _lp_team_in(record: dict) -> bool:
+    accepted = {TEAM_NAME.lower()} | {n.lower() for n in TEAM_ALIASES}
+    for participant in _lp_participants(record):
+        name = participant["name"].lower()
+        if any(token and token in name for token in accepted | {TEAM_SLUG.replace("-", " ")}):
+            return True
+    return False
+
+
+# ---------- 数据源调度 ----------
+
+SOURCES = {"cito": _collect_cito, "liquipedia": _collect_liquipedia}
+
+
+def collect_events() -> tuple[list, str]:
+    collector = SOURCES.get(SOURCE.lower())
+    if collector is None:
+        raise SystemExit(
+            f"错误：未知的数据源 SOURCE={SOURCE!r}，可选：{'、'.join(sorted(SOURCES))}"
+        )
+    print(f"[源] 使用数据源：{SOURCE}")
+    return collector()
 
 
 # ---------- 写 iCalendar ----------
