@@ -1,7 +1,6 @@
-#!/usr/bin/env python3
 """生成 Team Spirit CS2 赛程的 iCalendar(.ics) 文件，用于导入 iPhone 日历。
 
-数据源：bzzoiro Sports Data API 的 CS2 接口（免费，注册只要邮箱）。
+数据源：Cito API 的 CS2 接口（免费档 500 次/月，注册无需信用卡）。
 输出的命名方式沿用曼联日历：未进行显示「主队 VS 客队」，已结束显示「主队 比分 客队」，
 队名不翻译；备注里显示比赛名称，已结束的比赛备注里逐张列出地图比分。
 """
@@ -15,21 +14,20 @@ from datetime import datetime, timedelta, timezone
 import requests
 
 # ==========配置区域==========
-# bzzoiro 的 API key（必填）。到 https://sports.bzzoiro.com/register/ 免费注册后获取。
-API_TOKEN = (os.environ.get("BZZOIRO_API_KEY") or "").strip()
-API_BASE = (os.environ.get("BZZOIRO_API_BASE") or "https://sports.bzzoiro.com").rstrip("/")
+# Cito 的 API key（必填）。到 https://citoapi.com/signup?game=cs2 免费注册（500 次/月）。
+API_KEY = (os.environ.get("CITO_API_KEY") or "").strip()
+API_BASE = (os.environ.get("CITO_API_BASE") or "https://api.citoapi.com/api/v1").rstrip("/")
 
-TEAM = (os.environ.get("TEAM_NAME") or "Team Spirit").strip()
+# Team Spirit 在 Cito 里的 slug（接口也接受 id，如 cs2-team-7020）。
+TEAM_SLUG = (os.environ.get("TEAM_SLUG") or "spirit").strip()
+TEAM_NAME = (os.environ.get("TEAM_NAME") or "Team Spirit").strip()
 YEAR = int(os.environ.get("YEAR") or 2026)
-PAGE_SIZE = 100
-MAX_PAGES = 20
-# 已结束的比赛要再查一次详情才能拿到逐地图比分；留个上限防止意外打爆额度。
-DETAIL_FETCH_MAX = int(os.environ.get("DETAIL_FETCH_MAX") or 300)
-# 请求之间的间隔秒数，礼貌一点。
+PAGE_SIZE = 250
+MAX_PAGES = 4
 REQUEST_DELAY_SECONDS = float(os.environ.get("REQUEST_DELAY") or 0.5)
 
 OUTPUT_FILE = (os.environ.get("OUTPUT_FILE") or "matches.ics").strip()
-CALENDAR_NAME = f"{TEAM} CS2 {YEAR}"
+CALENDAR_NAME = f"{TEAM_NAME} CS2 {YEAR}"
 # ============================
 
 CRLF = "\r\n"
@@ -39,22 +37,8 @@ MAX_LINE_OCTETS = 75
 BO_DURATION_HOURS = {1: 1.0, 2: 1.5, 3: 2.5, 4: 3.5, 5: 4.0}
 DEFAULT_DURATION_HOURS = 2.0
 
-# 只打印一次 maps 元素的字段名，便于在 CI 日志里核对解析
-_MAP_SHAPE_LOGGED = False
-
 
 # ---------- 工具 ----------
-
-def _pick(mapping, *keys):
-    """从 dict 里按候选键依次取值（不同接口的字段名偶有差异）。"""
-    if not isinstance(mapping, dict):
-        return None
-    for key in keys:
-        value = mapping.get(key)
-        if value not in (None, "", []):
-            return value
-    return None
-
 
 def _as_int(value):
     try:
@@ -63,10 +47,18 @@ def _as_int(value):
         return None
 
 
-def _team_name(side) -> str:
-    if isinstance(side, dict):
-        return str(_pick(side, "name", "title", "team_name") or "").strip()
-    return str(side or "").strip()
+def _sum_rounds(halves) -> int | None:
+    """把上下半场回合数相加得到该地图总分（示例 [10,3] -> 13）。"""
+    if not isinstance(halves, (list, tuple)) or not halves:
+        return None
+    total = 0
+    found = False
+    for value in halves:
+        number = _as_int(value)
+        if number is not None:
+            total += number
+            found = True
+    return total if found else None
 
 
 def _parse_dt(value):
@@ -79,191 +71,130 @@ def _parse_dt(value):
     try:
         moment = datetime.fromisoformat(text)
     except ValueError:
-        for fmt in ("%Y-%m-%d %H:%M:%S", "%Y-%m-%d"):
-            try:
-                moment = datetime.strptime(text, fmt)
-                break
-            except ValueError:
-                continue
-        else:
-            return None
+        return None
     if moment.tzinfo is None:
         moment = moment.replace(tzinfo=timezone.utc)
     return moment.astimezone(timezone.utc)
 
 
-# ---------- 数据源：bzzoiro CS2 ----------
+# ---------- 数据源：Cito CS2 ----------
 
 def _api_get(path: str, params: dict | None = None):
-    if not API_TOKEN:
+    if not API_KEY:
         raise SystemExit(
-            "错误：缺少 BZZOIRO_API_KEY。\n"
-            "到 https://sports.bzzoiro.com/register/ 免费注册（只要邮箱）即可拿到 key，\n"
+            "错误：缺少 CITO_API_KEY。\n"
+            "到 https://citoapi.com/signup?game=cs2 免费注册（500 次/月，无需信用卡）即可拿到 key，\n"
             "然后在本机设为环境变量，或在仓库 Settings → Secrets 里加同名 Secret。"
         )
-    headers = {"Authorization": f"Token {API_TOKEN}", "Accept": "application/json"}
-    url = f"{API_BASE}{path}"
-    resp = requests.get(url, headers=headers, params=params or {}, timeout=40)
+    headers = {"x-api-key": API_KEY, "Accept": "application/json"}
+    resp = requests.get(f"{API_BASE}{path}", headers=headers, params=params or {}, timeout=40)
     if resp.status_code in (401, 403):
         raise SystemExit(
-            f"错误：API 拒绝了请求（HTTP {resp.status_code}）。请检查 BZZOIRO_API_KEY 是否有效"
-            f"（头部格式应为 Authorization: Token <key>）。"
+            f"错误：Cito 拒绝了请求（HTTP {resp.status_code}）。请检查 CITO_API_KEY 是否有效"
+            f"（头部应为 x-api-key）。"
         )
+    if resp.status_code == 429:
+        raise SystemExit("错误：Cito 返回 429（超出免费额度 500 次/月 或 10 次/分钟），请稍后再试。")
     resp.raise_for_status()
     time.sleep(REQUEST_DELAY_SECONDS)
-    return resp.json()
+    payload = resp.json()
+    if isinstance(payload, dict) and payload.get("success") is False:
+        raise SystemExit(f"错误：Cito 返回失败：{payload.get('error') or payload}")
+    return payload
 
 
-def resolve_team() -> dict | None:
-    """先用队伍名搜索拿到队伍记录（含 id）。
-
-    matches 接口的 team 参数在规范里只写了 type: string，没说清是名字还是 ID，
-    所以这里先把 id 查出来，之后按 id 查、不行再按名字查。
-    """
-    try:
-        payload = _api_get("/csgo/api/v2/teams/", {"search": TEAM, "limit": 50})
-    except (requests.HTTPError, SystemExit) as exc:
-        print(f"[bzzoiro] 队伍搜索失败，将直接用队名查询：{exc}")
-        return None
-    results = payload.get("results") if isinstance(payload, dict) else payload
-    results = results or []
-    exact = [t for t in results
-             if str((t or {}).get("name", "")).strip().lower() == TEAM.lower()]
-    pick = exact[0] if exact else (results[0] if results else None)
-    if pick:
-        print(f"[bzzoiro] 队伍搜索命中：{pick.get('name')}（id={pick.get('id')}，"
-              f"候选 {len(results)} 个）")
-    else:
-        print(f"[bzzoiro] 队伍搜索没有结果，将直接用队名查询")
-    return pick
-
-
-def fetch_matches(team_ref: str) -> list:
-    """按给定的队伍引用（id 或名字）列出该年的 CS2 比赛（含分页）。"""
-    results, offset = [], 0
-    for page in range(MAX_PAGES):
-        payload = _api_get("/csgo/api/v2/matches/", {
-            "team": team_ref,
-            "date_from": f"{YEAR}-01-01",
-            "date_to": f"{YEAR}-12-31",
-            "limit": PAGE_SIZE,
-            "offset": offset,
-        })
-        batch = payload.get("results") if isinstance(payload, dict) else payload
+def fetch_matches() -> list:
+    """取该队的全部比赛（含进行中与已结束，maps 内嵌在列表响应里）。"""
+    results, page = [], 1
+    for _ in range(MAX_PAGES):
+        payload = _api_get(f"/cs2/teams/{TEAM_SLUG}/matches",
+                           {"limit": PAGE_SIZE, "page": page})
+        batch = payload.get("data") if isinstance(payload, dict) else payload
         batch = batch or []
-        print(f"[bzzoiro] team={team_ref} 第 {page + 1} 页取到 {len(batch)} 条"
-              f"（累计 {len(results) + len(batch)}）")
+        print(f"[cito] 第 {page} 页取到 {len(batch)} 条（累计 {len(results) + len(batch)}）")
         results.extend(batch)
-        if len(batch) < PAGE_SIZE:
+        meta = payload.get("meta") or {}
+        if len(batch) < PAGE_SIZE or not meta.get("hasNext"):
             break
-        offset += PAGE_SIZE
+        page += 1
     return results
 
 
-def fetch_matches_any_ref(team: dict | None) -> list:
-    """先按队伍 id 查，结果为空再按队名查（两种语义都试，避免过滤参数不被支持）。"""
-    refs = []
-    if team and team.get("id") is not None:
-        refs.append(str(team["id"]))
-    refs.append(TEAM)
+def _side_names(record: dict) -> tuple[str, str]:
+    def name(side_key, name_key):
+        side = record.get(side_key)
+        if isinstance(side, dict) and side.get("name"):
+            return str(side["name"]).strip()
+        return str(record.get(name_key) or "").strip()
 
-    for ref in dict.fromkeys(refs):
-        records = fetch_matches(ref)
-        if records:
-            involved = sum(1 for r in records if _matches_team(r))
-            print(f"[bzzoiro] team={ref} 返回 {len(records)} 条，其中与本队相关 {involved} 条")
-            if involved == 0:
-                print(f"[bzzoiro] 警告：这一批里没有 {TEAM}，team 过滤可能未生效；"
-                      f"将继续尝试下一种写法")
-                continue
-            return records
-    return []
+    return name("team1", "team1Name"), name("team2", "team2Name")
 
 
-def _matches_team(record: dict) -> bool:
-    names = f"{_team_name(record.get('home_team'))} {_team_name(record.get('away_team'))}".lower()
-    return TEAM.lower() in names
+def _maps_team(record: dict) -> bool:
+    left, right = _side_names(record)
+    names = f"{left} {right}".lower()
+    if TEAM_NAME.lower() in names:
+        return True
+    # 兜底：slug 形如 team-spirit / spirit
+    return TEAM_SLUG.replace("-", " ").lower() in names
 
 
-def _map_rows(detail: dict) -> list:
+def _map_rows(record: dict) -> list:
     """逐地图比分。
 
-    注意：bzzoiro 的 OpenAPI 规范里 maps 的元素结构是未定义的（items: {}），
-    所以这里对多种可能的字段名做容错；首次遇到时会打印一次字段名到日志，
-    便于发现对方改了结构或我方解析有遗漏。
+    优先用 map.team1Score/team2Score；它们为空时用上下半场回合数相加
+    （官方示例：team1Halves [10,3] vs team2Halves [2,0] -> 13-2，且 durationRounds=15=13+2）。
     """
-    global _MAP_SHAPE_LOGGED
     rows = []
-    for item in detail.get("maps") or []:
-        if isinstance(item, str):
-            rows.append({"map": item, "scores": [None, None], "length": None})
-            continue
+    for item in record.get("maps") or []:
         if not isinstance(item, dict):
             continue
-        if not _MAP_SHAPE_LOGGED:
-            print(f"[bzzoiro] maps 元素的字段名（首次出现，便于核对解析）：{sorted(item)}")
-            _MAP_SHAPE_LOGGED = True
-
-        map_name = str(_pick(item, "map", "map_name", "mapname", "name", "map_title") or "").strip()
-        scores = _pick(item, "scores", "score", "round_scores")
-        if isinstance(scores, dict):
-            left = _as_int(_pick(scores, "home", "left", "team1", "home_score"))
-            right = _as_int(_pick(scores, "away", "right", "team2", "away_score"))
-        elif isinstance(scores, (list, tuple)) and len(scores) >= 2:
-            left, right = _as_int(scores[0]), _as_int(scores[1])
-        else:
-            left = _as_int(_pick(item, "home_score", "score_home", "score1", "score_left",
-                                 "home_rounds", "rounds_home"))
-            right = _as_int(_pick(item, "away_score", "score_away", "score2", "score_right",
-                                  "away_rounds", "rounds_away"))
-        if not map_name and left is None and right is None:
+        name = str(item.get("mapName") or item.get("map") or "").strip()
+        left = _as_int(item.get("team1Score"))
+        right = _as_int(item.get("team2Score"))
+        if left is None or right is None:
+            h_left = _sum_rounds(item.get("team1Halves"))
+            h_right = _sum_rounds(item.get("team2Halves"))
+            if h_left is not None and h_right is not None:
+                left, right = h_left, h_right
+        note = ""
+        if item.get("isForfeit"):
+            note = "（弃权）"
+        elif item.get("resultType") not in (None, "played"):
+            note = f"（{item.get('resultType')}）"
+        if not name and left is None and right is None:
             continue
-        rows.append({"map": map_name or "?", "scores": [left, right],
-                     "length": _pick(item, "duration", "length", "time")})
+        rows.append({"map": name or "?", "scores": [left, right],
+                     "number": _as_int(item.get("mapNumber")) or 0, "note": note})
+    rows.sort(key=lambda row: row["number"])
     return rows
 
 
-def _tournament_title(record: dict, detail: dict | None = None) -> str:
-    source = detail or record
-    tournament = _pick(source, "tournament")
-    name = ""
-    if isinstance(tournament, dict):
-        name = str(_pick(tournament, "name", "title") or "")
-    elif tournament:
-        name = str(tournament)
-    if not name:
-        name = str(_pick(source, "tournament_name") or "")
-    stage = str(_pick(source, "stage") or "").strip()
-    if stage and stage.lower() not in name.lower():
-        return f"{name} - {stage}" if name else stage
-    return name or "未知赛事"
-
-
-def normalize(record: dict, detail: dict | None = None) -> dict | None:
-    start = _parse_dt(_pick(record, "start_time", "date", "start_date") or
-                      (detail or {}).get("start_time"))
+def normalize(record: dict) -> dict | None:
+    start = _parse_dt(record.get("startsAt") or record.get("startTime"))
     if start is None or start.year != YEAR:
         return None
 
-    left = _team_name(record.get("home_team")) or _team_name((detail or {}).get("home_team"))
-    right = _team_name(record.get("away_team")) or _team_name((detail or {}).get("away_team"))
+    left, right = _side_names(record)
     if not left or not right:
         return None
 
-    status = str(_pick(record, "status") or (detail or {}).get("status") or "").lower()
-    score_left = _as_int(_pick(record, "home_score") if record.get("home_score") is not None
-                         else (detail or {}).get("home_score"))
-    score_right = _as_int(_pick(record, "away_score") if record.get("away_score") is not None
-                          else (detail or {}).get("away_score"))
-    finished = status == "finished" and score_left is not None and score_right is not None
+    status = str(record.get("status") or "").lower()
+    score_left = _as_int(record.get("team1Score"))
+    score_right = _as_int(record.get("team2Score"))
+    finished = status == "completed" and score_left is not None and score_right is not None
 
-    bestof = _as_int(_pick(record, "best_of") or (detail or {}).get("best_of"))
+    bestof = _as_int(record.get("bestOf"))
     duration = BO_DURATION_HOURS.get(bestof, DEFAULT_DURATION_HOURS)
-    maps = _map_rows(detail) if (detail and finished) else []
 
-    key = _pick(record, "id", "api_id") or (detail or {}).get("id")
+    event_name = str(record.get("eventName") or "").strip()
+    stage = str(record.get("stageName") or "").strip()
+    title = event_name or "未知赛事"
+    if stage and stage.lower() not in title.lower():
+        title = f"{title} - {stage}" if event_name else stage
+
     return {
-        "key": str(key or "").strip(),
+        "key": str(record.get("id") or "").strip(),
         "start": start,
         "duration": timedelta(hours=duration),
         "left": left,
@@ -271,32 +202,30 @@ def normalize(record: dict, detail: dict | None = None) -> dict | None:
         "score": (score_left, score_right) if finished else None,
         "finished": finished,
         "bestof": bestof,
-        "tournament": _tournament_title(record, detail),
-        "maps": maps,
+        "tournament": title,
+        "maps": _map_rows(record) if finished else [],
         "status": status,
     }
 
 
 def collect_events() -> tuple[list, str]:
-    team = resolve_team()
-    records = fetch_matches_any_ref(team)
-    print(f"[bzzoiro] 列表共取到 {len(records)} 条")
+    records = fetch_matches()
+    print(f"[cito] 列表共取到 {len(records)} 条")
 
     events, skipped_team, skipped_year, skipped_time, duplicates = [], 0, 0, 0, 0
     missing_time = []
     seen = set()
     for record in records:
-        if not _matches_team(record):
+        if not _maps_team(record):
             skipped_team += 1
             continue
-        start = _parse_dt(_pick(record, "start_time", "date", "start_date"))
+        start = _parse_dt(record.get("startsAt") or record.get("startTime"))
         if start is None:
-            # 没有开赛时间就无法生成日程，必须明确报出来，避免"比赛凭空少了"而无人察觉
+            # 没有开赛时间就无法生成日程，必须明确报出来
             skipped_time += 1
             if len(missing_time) < 5:
-                missing_time.append(
-                    f"{_team_name(record.get('home_team'))} vs {_team_name(record.get('away_team'))}"
-                    f"（id={record.get('id')}）")
+                left, right = _side_names(record)
+                missing_time.append(f"{left} vs {right}（id={record.get('id')}）")
             continue
         if start.year != YEAR:
             skipped_year += 1
@@ -311,43 +240,30 @@ def collect_events() -> tuple[list, str]:
         seen.add(event["key"])
         events.append(event)
 
-    # 已结束的比赛再查详情，取逐地图比分
-    finished = [e for e in events if e["finished"]]
-    if finished:
-        print(f"[bzzoiro] 需要补充逐地图比分的已结束比赛 {len(finished)} 场"
-              f"（上限 {DETAIL_FETCH_MAX}）")
-        for event in finished[:DETAIL_FETCH_MAX]:
-            try:
-                detail = _api_get(f"/csgo/api/v2/matches/{event['key']}/")
-            except requests.HTTPError as exc:
-                status = exc.response.status_code if exc.response is not None else "?"
-                print(f"[bzzoiro] 详情接口失败（HTTP {status}），该场地图比分将缺失：{event['key']}")
-                continue
-            event["maps"] = _map_rows(detail)
-            if not event["maps"]:
-                print(f"[bzzoiro] 该场没有返回地图数据：{event['key']}")
-
     if not events:
         raise SystemExit(
-            f"错误：没有取到 {TEAM} 在 {YEAR} 年的任何比赛，拒绝写出空日历。\n"
+            f"错误：没有取到 {TEAM_NAME} 在 {YEAR} 年的任何比赛，拒绝写出空日历。\n"
             f"原始记录 {len(records)} 条（非本队 {skipped_team}、年份不符 {skipped_year}、"
             f"缺少开赛时间 {skipped_time}、重复 {duplicates}）。"
-            f"请检查 key / 年份 / 队名配置。"
+            f"请检查 key / 队名 slug / 年份配置。"
         )
 
     events.sort(key=lambda e: e["start"])
     finished_count = sum(1 for e in events if e["finished"])
-    print(f"[bzzoiro] 有效比赛 {len(events)} 场（已结束 {finished_count} 场，"
-          f"未进行 {len(events) - finished_count} 场；"
+    with_maps = sum(1 for e in events if e["finished"] and e["maps"])
+    print(f"[cito] 有效比赛 {len(events)} 场（已结束 {finished_count} 场，其中带逐地图比分 "
+          f"{with_maps} 场；未进行 {len(events) - finished_count} 场；"
           f"过滤掉 非本队 {skipped_team} / 年份不符 {skipped_year} / "
           f"缺少开赛时间 {skipped_time} / 重复 {duplicates}）")
+    if finished_count and with_maps < finished_count:
+        print(f"[cito] 注意：有 {finished_count - with_maps} 场已结束比赛没有逐地图数据")
     if skipped_time:
-        print(f"[bzzoiro] 警告：有 {skipped_time} 场比赛因为接口没有给开赛时间而被跳过，"
+        print(f"[cito] 警告：有 {skipped_time} 场比赛因为接口没有给开赛时间而被跳过，"
               f"这些场次不会出现在日历里：")
         for item in missing_time:
             print(f"         {item}")
 
-    note = f"数据来源：bzzoiro CS2 API（sports.bzzoiro.com）"
+    note = "数据来源：Cito API（cs2-api.org）"
     print(f"[覆盖] {note}")
     return events, note
 
@@ -406,8 +322,7 @@ def build_description(event: dict) -> str:
                     detail = f"{scores[0]}-{scores[1]}"
                 else:
                     detail = "比分未知"
-                extra = f"（{row['length']}）" if row.get("length") else ""
-                lines.append(f"  {index}. {row['map']} {detail}{extra}")
+                lines.append(f"  {index}. {row['map']} {detail}{row.get('note', '')}")
         else:
             lines.append("地图比分：数据缺失")
 

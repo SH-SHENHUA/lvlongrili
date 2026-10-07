@@ -18,7 +18,7 @@
     1. Dust2 13-9
     2. Mirage 9-13
     3. Inferno 11-13
-  比赛ID：5001
+  比赛ID：cs2-match-2398526
   ```
 
 - 日程时长按赛制估算：BO1 = 1 小时、BO3 = 2.5 小时、BO5 = 4 小时，未知按 2 小时
@@ -26,51 +26,56 @@
 - 每个事件的 `UID` 由比赛 ID 稳定派生，**导入到同一个日历时是更新事件，不会产生重复条目**
 - GitHub Actions **每天**自动更新一次（03:00 UTC = 北京时间 11:00）
 
-## 数据来源：bzzoiro CS2 API（免费，注册只要邮箱）
+## 数据来源：Cito API 的 CS2 接口（免费档 500 次/月）
 
-数据来自 [bzzoiro Sports Data API 的 CS2 接口](https://sports.bzzoiro.com/docs/explorer/csgo/)
-（官方 [OpenAPI 规范](https://sports.bzzoiro.com/api/schema/)）。用到的字段：
+数据来自 [cs2-api.org](https://cs2-api.org)（Cito API）的 CS2 接口。
+文档明确写着覆盖「**results with every map score**（每一张地图的比分）」，索引约 1.5 万场比赛。
 
-| 你的要求 | 对应字段 |
+用到的端点与字段：
+
+| 你的要求 | 接口与字段 |
 | --- | --- |
-| 比赛名称 | `tournament.name` + `stage` |
-| 双方与系列赛比分 | `home_team` / `away_team` / `home_score` / `away_score` |
-| **每张地图的比分** | 详情接口的 **`maps`**（规范原文：*Per-map round scores for each map played*） |
-| 开赛时间 / 赛制 / 状态 | `start_time`（UTC）/ `best_of` / `status` |
+| 该队全部比赛（含 maps） | `GET /cs2/teams/{slug}/matches` → `data[]`，每条内嵌 `maps[]` |
+| 比赛名称 | `eventName` + `stageName` |
+| 双方与系列赛比分 | `team1Name` / `team2Name` / `team1Score` / `team2Score` |
+| **每张地图的比分** | `maps[].mapName`，比分优先取 `team1Score`/`team2Score`，为空时用 `team1Halves`/`team2Halves` 相加 |
+| 开赛时间 / 赛制 / 状态 | `startsAt`（UTC，ISO 8601）/ `bestOf` / `status`（`upcoming`/`live`/`completed`） |
 
-接口：
+鉴权：请求头 `x-api-key`；响应统一为 `{ success, data, meta }`。
 
-```
-GET /csgo/api/v2/matches/?team=Team Spirit&date_from=2026-01-01&date_to=2026-12-31
-GET /csgo/api/v2/matches/{id}/        # 详情里有 maps（逐地图）
-Header: Authorization: Token <你的key>
-```
+> 关于逐地图比分的还原：官方示例里 `maps[].team1Score`/`team2Score` 可能为 `null`，
+> 但 `team1Halves`/`team2Halves`（上下半场回合数）是齐全的，且 `durationRounds` 等于两队回合数之和
+> （示例 `[10,3]` vs `[2,0]` → 13-2，`durationRounds` 15 = 13+2）。因此脚本按这个规则还原比分。
 
-### 为什么选它（对比其它来源）
+### 为什么用 Cito（对比其它来源，均为实测）
 
-| 来源 | 逐地图比分 | 获取 key | 结论 |
+| 来源 | 逐地图比分 | 拿 key | 结论 |
 | --- | --- | --- | --- |
-| **bzzoiro CS2 API** | ✅ `maps` | **免费，邮箱注册** | **采用** |
-| Liquipedia LPDB v3 | ✅ `match2games` | 免费，但要加入他们的 **Discord** 申请 | 备选 |
-| PandaScore | ❌ 免费档不含「比赛内的每一局」，需付费 Historical | 注册简单 | 排除 |
+| **Cito API（cs2-api.org）** | ✅ `maps[]`（逐张地图） | **免费，邮箱注册，无需信用卡** | **采用** |
+| bzzoiro CS2 API | ❌ **实测 55 场已结束比赛 `maps` 全为空**（live 接口与 `?include=maps` 同样为空，`/stats/` 的 `map_pool` 也是空） | 免费，邮箱 | 排除（赛程可用，但拿不到逐地图比分） |
+| Liquipedia LPDB v3 | ✅ `match2games` | 免费，但需加入 **Discord** 申请 | 备选 |
+| PandaScore | ❌ 免费档不含「比赛内的每一局」，需付费 Historical | 简单 | 排除 |
 | TheSportsDB | ❌ 无 CS2 比赛数据（其电竞只覆盖 LoL / 火箭联盟） | 无需 key | 排除 |
-| bo3.gg | ❌ `match_maps` 只有地图名/顺序，无比分；且无法按队伍列出赛程 | 无需 key | 排除 |
-| HLTV 直连 / 社区镜像 | 有数据但页面 | —— | 被 Cloudflare 403 拦截（GitHub Actions 同样会被拦） |
+| bo3.gg | ❌ `match_maps` 只有地图名/顺序，没有比分；且无法按队伍列出赛程 | 无需 key | 排除 |
+| HLTV 直连 / 社区镜像 | 页面有数据 | —— | 全部 **403**（Cloudflare），GitHub Actions 同样会被拦 |
+
+请求量：每天只需 1 次请求（`/cs2/teams/{slug}/matches`，`limit=250`），
+约 30 次/月，远低于免费档 500 次/月。
 
 ### 申请 key（免费）
 
-1. 打开 **https://sports.bzzoiro.com/register/**，用邮箱注册
-2. 在个人页面拿到 API key
-3. 在仓库 `Settings → Secrets and variables → Actions` 新增 Secret：**`BZZOIRO_API_KEY`**
+1. 打开 **https://citoapi.com/signup?game=cs2**，用邮箱注册（500 次/月，10 次/分钟，无需信用卡）
+2. 在控制台复制 API key
+3. 在仓库 `Settings → Secrets and variables → Actions` 新增 Secret：**`CITO_API_KEY`**
 
 ## 可调配置（环境变量）
 
 | 变量 | 默认 | 说明 |
 | --- | --- | --- |
-| `BZZOIRO_API_KEY` | 无（**必填**） | API key |
-| `TEAM_NAME` | `Team Spirit` | 队伍名（传给接口的 `team` 参数） |
+| `CITO_API_KEY` | 无（**必填**） | API key |
+| `TEAM_SLUG` | `spirit` | 队伍 slug（如 `vitality`、`natus-vincere`），也接受 id |
+| `TEAM_NAME` | `Team Spirit` | 队名，用于识别「哪些比赛是本队的」并写入日历名 |
 | `YEAR` | `2026` | 只取该自然年的比赛 |
-| `DETAIL_FETCH_MAX` | `300` | 最多为多少场已结束比赛补查逐地图比分 |
 | `REQUEST_DELAY` | `0.5` | 请求间隔秒数 |
 | `OUTPUT_FILE` | `matches.ics` | 输出文件名 |
 
@@ -87,7 +92,7 @@ Header: Authorization: Token <你的key>
 
 | 文件 | 作用 |
 | --- | --- |
-| `generate.py` | 拉取 bzzoiro 数据并输出 `matches.ics` |
+| `generate.py` | 拉取 Cito 数据并输出 `matches.ics` |
 | `validate_ics.py` | 校验 `matches.ics` 是否符合 iOS 导入要求（CI 在提交前运行） |
 | `matches.ics` | 生成结果 |
 | `.gitattributes` | 禁止 Git 对 `*.ics` 做行尾转换（RFC 5545 要求 CRLF） |
@@ -96,7 +101,7 @@ Header: Authorization: Token <你的key>
 
 ```bash
 pip install -r requirements.txt
-export BZZOIRO_API_KEY=你的key      # Windows: set BZZOIRO_API_KEY=你的key
+export CITO_API_KEY=你的key      # Windows: set CITO_API_KEY=你的key
 python generate.py
 python validate_ics.py matches.ics
 ```

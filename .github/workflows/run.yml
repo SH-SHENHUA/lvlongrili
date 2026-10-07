@@ -30,8 +30,8 @@ jobs:
 
       - name: Run script
         env:
-          # bzzoiro 的 API key，请在仓库 Settings -> Secrets 里添加同名 Secret
-          BZZOIRO_API_KEY: ${{ secrets.BZZOIRO_API_KEY }}
+          # Cito 的 API key，请在仓库 Settings -> Secrets 里添加同名 Secret
+          CITO_API_KEY: ${{ secrets.CITO_API_KEY }}
         run: python generate.py
 
       - name: Validate ics for iPhone import
