@@ -149,11 +149,22 @@ Header: Authorization: Apikey <你的key>
 
 用 `SOURCE` 切换即可，两种源产出的日历格式完全一致，也都受下面的累积缓存保护。
 
+**也可以同时用两个源合并**（`SOURCE=cito,liquipedia`）：按「UTC 日期 + 双方队名」去重，
+**写在后面的源优先**。之所以需要这个能力 —— 实测 Cito 对 Esports World Cup 2026 的覆盖不完整
+（Spirit 实际打完整届并夺冠，Cito 只收录 2 场，其中 1 场还停在未结束），
+加上 Liquipedia 后可以把这段补上，且已有的比赛是原地更新、不会重复。
+
+**地点是「赛事级」的**：`LOCATION` 取自赛事（`GET /cs2/events/{id}`），
+因此跨场馆的赛事会显示赛事的登记地点。例如 Esports World Cup 2026 主赛场在利雅得、
+但总决赛移师巴黎 Accor Arena，Cito 把该赛事的地点登记为 `Paris, France`，
+所以该赛事的比赛都会显示巴黎。单场馆赛事不受影响（如 `Katowice, Poland`）。
+线上赛事显示为 `Europe (Online)`。
+
 ## 可调配置（环境变量）
 
 | 变量 | 默认 | 说明 |
 | --- | --- | --- |
-| `SOURCE` | `cito` | 数据源：`cito` 或 `liquipedia` |
+| `SOURCE` | `cito` | 数据源：`cito` 或 `liquipedia`；**可用逗号分隔多个源合并**（如 `cito,liquipedia`，写在后面的优先） |
 | `CITO_API_KEY` | 无（`SOURCE=cito` 时必填） | Cito API key |
 | `LIQUIPEDIA_API_KEY` | 无（`SOURCE=liquipedia` 时必填） | Liquipedia API key |
 | `LIQUIPEDIA_USER_AGENT` | 带用途与联系方式的默认值 | Liquipedia 条款要求 |

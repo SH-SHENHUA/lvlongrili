@@ -690,16 +690,37 @@ def _lp_team_in(record: dict) -> bool:
 SOURCES = {"cito": _collect_cito, "liquipedia": _collect_liquipedia}
 
 
+def _source_names() -> list:
+    names = [item.strip().lower() for item in SOURCE.split(",") if item.strip()]
+    return names or ["cito"]
+
+
 def collect_events(cached_locations: dict | None = None) -> tuple[list, str]:
-    collector = SOURCES.get(SOURCE.lower())
-    if collector is None:
+    """按 SOURCE 指定的数据源取比赛；支持逗号分隔多个源并按顺序合并。
+
+    多源合并的意义：单个源可能漏比赛。实测 Cito 对 Esports World Cup 2026 的覆盖不完整
+    （Spirit 实际打完整届并夺冠，Cito 只收录 2 场），而 bzzoiro 的对手名单也对不上。
+    合并时按「UTC 日期 + 双方队名」的规范键去重，**写在后面的源优先**：
+    例如 SOURCE=cito,liquipedia 表示以 Liquipedia 补齐并覆盖冲突项。
+    """
+    names = _source_names()
+    unknown = [name for name in names if name not in SOURCES]
+    if unknown:
         raise SystemExit(
-            f"错误：未知的数据源 SOURCE={SOURCE!r}，可选：{'、'.join(sorted(SOURCES))}"
+            f"错误：未知的数据源 {('、'.join(unknown))}，可选：{'、'.join(sorted(SOURCES))}"
+            f"（可用逗号分隔多个源合并，如 cito,liquipedia）"
         )
-    print(f"[源] 使用数据源：{SOURCE}")
-    if collector is _collect_cito:
-        return collector(cached_locations)
-    return collector()
+
+    merged, notes = {}, []
+    for name in names:
+        collector = SOURCES[name]
+        print(f"[源] 使用数据源：{name}")
+        events, note = (collector(cached_locations) if name == "cito" else collector())
+        print(f"[源] {name} 提供 {len(events)} 场")
+        for event in events:
+            merged[event["key"]] = event
+        notes.append(note)
+    return list(merged.values()), " + ".join(notes)
 
 
 # ---------- 写 iCalendar ----------
