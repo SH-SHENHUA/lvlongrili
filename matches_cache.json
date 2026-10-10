@@ -1,5 +1,5 @@
 {
- "count": 60,
+ "count": 61,
  "event_locations": {
   "cs2-event-8049": {
    "checked_at": "2026-10-07T16:47:27Z",
@@ -260,12 +260,28 @@
    "status": "completed"
   },
   "cs2-event-8244": {
-   "checked_at": "2026-10-07T16:53:30Z",
+   "checked_at": "2026-10-10T09:30:48Z",
    "endsAt": "2026-10-11T23:59:59.000Z",
    "fetched_ids": [],
    "isLan": true,
    "location": "Katowice, Poland",
-   "matches": [],
+   "matches": [
+    {
+     "id": "cs2-match-2398753",
+     "teams": [
+      {
+       "id": "cs2-team-11283",
+       "name": "Falcons",
+       "score": 0
+      },
+      {
+       "id": "cs2-team-7020",
+       "name": "Spirit",
+       "score": 2
+      }
+     ]
+    }
+   ],
    "name": "ESL Pro League Season 24",
    "status": "live"
   },
@@ -3096,15 +3112,53 @@
    "bestof": 3,
    "data_note": "",
    "duration_hours": 2.5,
-   "finished": false,
+   "finished": true,
    "key": "1eb13ff6826b7809",
    "left": "Falcons",
+   "location": "Katowice, Poland",
+   "maps": [
+    {
+     "map": "Mirage",
+     "note": "",
+     "number": 1,
+     "scores": [
+      8,
+      13
+     ]
+    },
+    {
+     "map": "Anubis",
+     "note": "",
+     "number": 2,
+     "scores": [
+      10,
+      13
+     ]
+    }
+   ],
+   "right": "Spirit",
+   "score": [
+    0,
+    2
+   ],
+   "source_id": "cs2-match-2398753",
+   "start": "2026-10-09T17:05:00+00:00",
+   "status": "completed",
+   "tournament": "ESL Pro League Season 24"
+  },
+  {
+   "bestof": 3,
+   "data_note": "",
+   "duration_hours": 2.5,
+   "finished": false,
+   "key": "c390daae2d74fac3",
+   "left": "MOUZ",
    "location": "Katowice, Poland",
    "maps": [],
    "right": "Spirit",
    "score": null,
-   "source_id": "cs2-match-2398753",
-   "start": "2026-10-09T16:00:00+00:00",
+   "source_id": "cs2-match-2398755",
+   "start": "2026-10-10T17:00:00+00:00",
    "status": "upcoming",
    "tournament": "ESL Pro League Season 24"
   }
