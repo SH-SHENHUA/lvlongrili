@@ -1,5 +1,5 @@
 {
- "count": 61,
+ "count": 62,
  "event_locations": {
   "cs2-event-8049": {
    "checked_at": "2026-10-07T16:47:27Z",
@@ -260,7 +260,7 @@
    "status": "completed"
   },
   "cs2-event-8244": {
-   "checked_at": "2026-10-10T09:30:48Z",
+   "checked_at": "2026-10-11T09:44:07Z",
    "endsAt": "2026-10-11T23:59:59.000Z",
    "fetched_ids": [],
    "isLan": true,
@@ -280,9 +280,24 @@
        "score": 2
       }
      ]
+    },
+    {
+     "id": "cs2-match-2398755",
+     "teams": [
+      {
+       "id": "cs2-team-7020",
+       "name": "Spirit",
+       "score": 1
+      },
+      {
+       "id": "cs2-team-4494",
+       "name": "MOUZ",
+       "score": 2
+      }
+     ]
     }
    ],
-   "name": "ESL Pro League Season 24",
+   "name": "ESL Pro League Season 23 Stage 1",
    "status": "live"
   },
   "cs2-event-8246": {
@@ -3150,17 +3165,64 @@
    "bestof": 3,
    "data_note": "",
    "duration_hours": 2.5,
-   "finished": false,
+   "finished": true,
    "key": "c390daae2d74fac3",
    "left": "MOUZ",
+   "location": "Katowice, Poland",
+   "maps": [
+    {
+     "map": "Dust2",
+     "note": "",
+     "number": 1,
+     "scores": [
+      13,
+      7
+     ]
+    },
+    {
+     "map": "Mirage",
+     "note": "",
+     "number": 2,
+     "scores": [
+      5,
+      13
+     ]
+    },
+    {
+     "map": "Nuke",
+     "note": "",
+     "number": 3,
+     "scores": [
+      13,
+      11
+     ]
+    }
+   ],
+   "right": "Spirit",
+   "score": [
+    2,
+    1
+   ],
+   "source_id": "cs2-match-2398755",
+   "start": "2026-10-10T17:10:00+00:00",
+   "status": "completed",
+   "tournament": "ESL Pro League Season 24"
+  },
+  {
+   "bestof": 3,
+   "data_note": "",
+   "duration_hours": 2.5,
+   "finished": false,
+   "key": "87b5b4a182a2a9c9",
+   "left": "Aurora",
    "location": "Katowice, Poland",
    "maps": [],
    "right": "Spirit",
    "score": null,
-   "source_id": "cs2-match-2398755",
-   "start": "2026-10-10T17:00:00+00:00",
+   "source_id": "cs2-match-2398756",
+   "start": "2026-10-11T11:30:00+00:00",
    "status": "upcoming",
-   "tournament": "ESL Pro League Season 24"
+   "tournament": "ESL Pro League Season 23 Stage 1"
   }
  ],
  "team": "Team Spirit",
