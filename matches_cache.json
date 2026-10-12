@@ -260,12 +260,27 @@
    "status": "completed"
   },
   "cs2-event-8244": {
-   "checked_at": "2026-10-11T09:44:07Z",
+   "checked_at": "2026-10-12T10:20:13Z",
    "endsAt": "2026-10-11T23:59:59.000Z",
    "fetched_ids": [],
    "isLan": true,
    "location": "Katowice, Poland",
    "matches": [
+    {
+     "id": "cs2-match-2398756",
+     "teams": [
+      {
+       "id": "cs2-team-11861",
+       "name": "Aurora",
+       "score": 2
+      },
+      {
+       "id": "cs2-team-7020",
+       "name": "Spirit",
+       "score": 0
+      }
+     ]
+    },
     {
      "id": "cs2-match-2398753",
      "teams": [
@@ -297,7 +312,7 @@
      ]
     }
    ],
-   "name": "ESL Pro League Season 23 Stage 1",
+   "name": "ESL Pro League Season 24",
    "status": "live"
   },
   "cs2-event-8246": {
@@ -3212,17 +3227,39 @@
    "bestof": 3,
    "data_note": "",
    "duration_hours": 2.5,
-   "finished": false,
+   "finished": true,
    "key": "87b5b4a182a2a9c9",
    "left": "Aurora",
    "location": "Katowice, Poland",
-   "maps": [],
+   "maps": [
+    {
+     "map": "Mirage",
+     "note": "",
+     "number": 1,
+     "scores": [
+      13,
+      9
+     ]
+    },
+    {
+     "map": "Anubis",
+     "note": "",
+     "number": 2,
+     "scores": [
+      13,
+      6
+     ]
+    }
+   ],
    "right": "Spirit",
-   "score": null,
+   "score": [
+    2,
+    0
+   ],
    "source_id": "cs2-match-2398756",
    "start": "2026-10-11T11:30:00+00:00",
-   "status": "upcoming",
-   "tournament": "ESL Pro League Season 23 Stage 1"
+   "status": "completed",
+   "tournament": "ESL Pro League Season 24"
   }
  ],
  "team": "Team Spirit",
