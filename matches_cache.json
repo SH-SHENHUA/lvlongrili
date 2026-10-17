@@ -1,5 +1,5 @@
 {
- "count": 62,
+ "count": 63,
  "event_locations": {
   "cs2-event-8049": {
    "checked_at": "2026-10-07T16:47:27Z",
@@ -56,6 +56,16 @@
    ],
    "name": "PGL Astana 2026",
    "status": "completed"
+  },
+  "cs2-event-8050": {
+   "checked_at": "2026-10-17T07:34:20Z",
+   "endsAt": "2026-10-31T23:59:59.000Z",
+   "fetched_ids": [],
+   "isLan": true,
+   "location": "Bucharest, Romania",
+   "matches": [],
+   "name": "PGL Masters Bucharest 2026",
+   "status": "upcoming"
   },
   "cs2-event-8240": {
    "checked_at": "2026-10-07T16:48:31Z",
@@ -3260,6 +3270,22 @@
    "start": "2026-10-11T11:30:00+00:00",
    "status": "completed",
    "tournament": "ESL Pro League Season 24"
+  },
+  {
+   "bestof": 3,
+   "data_note": "",
+   "duration_hours": 2.5,
+   "finished": false,
+   "key": "3d915d3ac22d9681",
+   "left": "Spirit",
+   "location": "Bucharest, Romania",
+   "maps": [],
+   "right": "BETBOOM",
+   "score": null,
+   "source_id": "cs2-match-2399721",
+   "start": "2026-10-24T10:00:00+00:00",
+   "status": "upcoming",
+   "tournament": "PGL Masters Bucharest 2026"
   }
  ],
  "team": "Team Spirit",
