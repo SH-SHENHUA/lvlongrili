@@ -270,7 +270,7 @@
    "status": "completed"
   },
   "cs2-event-8244": {
-   "checked_at": "2026-10-12T10:20:13Z",
+   "checked_at": "2026-10-20T08:14:55Z",
    "endsAt": "2026-10-11T23:59:59.000Z",
    "fetched_ids": [],
    "isLan": true,
@@ -323,7 +323,7 @@
     }
    ],
    "name": "ESL Pro League Season 24",
-   "status": "live"
+   "status": "completed"
   },
   "cs2-event-8246": {
    "checked_at": "2026-10-07T16:48:42Z",
