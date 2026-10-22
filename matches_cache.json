@@ -1,5 +1,5 @@
 {
- "count": 63,
+ "count": 64,
  "event_locations": {
   "cs2-event-8049": {
    "checked_at": "2026-10-07T16:47:27Z",
@@ -563,6 +563,16 @@
    ],
    "name": "BLAST Open Porto 2026",
    "status": "completed"
+  },
+  "cs2-event-8251": {
+   "checked_at": "2026-10-22T08:22:00Z",
+   "endsAt": "2026-11-15T23:59:59.000Z",
+   "fetched_ids": [],
+   "isLan": true,
+   "location": "Chek Lap Kok, Hong Kong",
+   "matches": [],
+   "name": "BLAST Rivals 2026 Season 2",
+   "status": "upcoming"
   },
   "cs2-event-8261": {
    "checked_at": "2026-10-07T16:46:28Z",
@@ -3286,6 +3296,22 @@
    "start": "2026-10-24T10:00:00+00:00",
    "status": "upcoming",
    "tournament": "PGL Masters Bucharest 2026"
+  },
+  {
+   "bestof": 3,
+   "data_note": "",
+   "duration_hours": 2.5,
+   "finished": false,
+   "key": "4cc78e82517efd70",
+   "left": "Spirit",
+   "location": "Chek Lap Kok, Hong Kong",
+   "maps": [],
+   "right": "FUT",
+   "score": null,
+   "source_id": "cs2-match-2399853",
+   "start": "2026-11-11T08:00:00+00:00",
+   "status": "upcoming",
+   "tournament": "BLAST Rivals 2026 Season 2"
   }
  ],
  "team": "Team Spirit",
