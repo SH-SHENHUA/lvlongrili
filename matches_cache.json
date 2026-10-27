@@ -1,5 +1,5 @@
 {
- "count": 66,
+ "count": 67,
  "event_locations": {
   "cs2-event-8049": {
    "checked_at": "2026-10-07T16:47:27Z",
@@ -3370,15 +3370,62 @@
    "bestof": 3,
    "data_note": "",
    "duration_hours": 2.5,
-   "finished": false,
+   "finished": true,
    "key": "01e305465dd5f72c",
    "left": "Spirit",
    "location": "Bucharest, Romania",
-   "maps": [],
+   "maps": [
+    {
+     "map": "Nuke",
+     "note": "",
+     "number": 1,
+     "scores": [
+      13,
+      7
+     ]
+    },
+    {
+     "map": "Ancient",
+     "note": "",
+     "number": 2,
+     "scores": [
+      8,
+      13
+     ]
+    },
+    {
+     "map": "Mirage",
+     "note": "",
+     "number": 3,
+     "scores": [
+      13,
+      11
+     ]
+    }
+   ],
    "right": "FURIA",
-   "score": null,
+   "score": [
+    2,
+    1
+   ],
    "source_id": "cs2-match-2399739",
-   "start": "2026-10-26T14:00:00+00:00",
+   "start": "2026-10-26T13:40:00+00:00",
+   "status": "completed",
+   "tournament": "PGL Masters Bucharest 2026"
+  },
+  {
+   "bestof": 3,
+   "data_note": "",
+   "duration_hours": 2.5,
+   "finished": false,
+   "key": "28b177a14f1aa663",
+   "left": "Spirit",
+   "location": "Bucharest, Romania",
+   "maps": [],
+   "right": "MOUZ",
+   "score": null,
+   "source_id": "cs2-match-2399745",
+   "start": "2026-10-27T14:00:00+00:00",
    "status": "upcoming",
    "tournament": "PGL Masters Bucharest 2026"
   },
