@@ -3464,16 +3464,47 @@
    "bestof": 3,
    "data_note": "",
    "duration_hours": 2.5,
-   "finished": false,
+   "finished": true,
    "key": "bb7abce65552c87d",
    "left": "Spirit",
    "location": "Bucharest, Romania",
-   "maps": [],
+   "maps": [
+    {
+     "map": "Cache",
+     "note": "",
+     "number": 1,
+     "scores": [
+      2,
+      13
+     ]
+    },
+    {
+     "map": "Dust2",
+     "note": "",
+     "number": 2,
+     "scores": [
+      13,
+      10
+     ]
+    },
+    {
+     "map": "Anubis",
+     "note": "",
+     "number": 3,
+     "scores": [
+      3,
+      13
+     ]
+    }
+   ],
    "right": "Natus Vincere",
-   "score": null,
+   "score": [
+    1,
+    2
+   ],
    "source_id": "cs2-match-2399751",
-   "start": "2026-10-28T17:00:00+00:00",
-   "status": "upcoming",
+   "start": "2026-10-28T16:00:00+00:00",
+   "status": "completed",
    "tournament": "PGL Masters Bucharest 2026"
   },
   {
@@ -3488,7 +3519,7 @@
    "right": "FUT",
    "score": null,
    "source_id": "cs2-match-2399853",
-   "start": "2026-11-11T08:00:00+00:00",
+   "start": "2026-11-11T07:00:00+00:00",
    "status": "upcoming",
    "tournament": "BLAST Rivals 2026 Season 2"
   }
