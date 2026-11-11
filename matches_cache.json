@@ -565,14 +565,30 @@
    "status": "completed"
   },
   "cs2-event-8251": {
-   "checked_at": "2026-10-22T08:22:00Z",
+   "checked_at": "2026-11-11T10:25:19Z",
    "endsAt": "2026-11-15T23:59:59.000Z",
    "fetched_ids": [],
    "isLan": true,
    "location": "Chek Lap Kok, Hong Kong",
-   "matches": [],
+   "matches": [
+    {
+     "id": "cs2-match-2399853",
+     "teams": [
+      {
+       "id": "cs2-team-7020",
+       "name": "Spirit",
+       "score": 2
+      },
+      {
+       "id": "cs2-team-13286",
+       "name": "FUT",
+       "score": 1
+      }
+     ]
+    }
+   ],
    "name": "BLAST Rivals 2026 Season 2",
-   "status": "upcoming"
+   "status": "live"
   },
   "cs2-event-8261": {
    "checked_at": "2026-10-07T16:46:28Z",
@@ -3511,16 +3527,47 @@
    "bestof": 3,
    "data_note": "",
    "duration_hours": 2.5,
-   "finished": false,
+   "finished": true,
    "key": "4cc78e82517efd70",
    "left": "Spirit",
    "location": "Chek Lap Kok, Hong Kong",
-   "maps": [],
+   "maps": [
+    {
+     "map": "Cache",
+     "note": "",
+     "number": 1,
+     "scores": [
+      13,
+      9
+     ]
+    },
+    {
+     "map": "Nuke",
+     "note": "",
+     "number": 2,
+     "scores": [
+      0,
+      13
+     ]
+    },
+    {
+     "map": "Ancient",
+     "note": "",
+     "number": 3,
+     "scores": [
+      13,
+      5
+     ]
+    }
+   ],
    "right": "FUT",
-   "score": null,
+   "score": [
+    2,
+    1
+   ],
    "source_id": "cs2-match-2399853",
-   "start": "2026-11-11T07:00:00+00:00",
-   "status": "upcoming",
+   "start": "2026-11-11T06:30:00+00:00",
+   "status": "completed",
    "tournament": "BLAST Rivals 2026 Season 2"
   }
  ],
