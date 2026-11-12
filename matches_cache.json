@@ -1,5 +1,5 @@
 {
- "count": 68,
+ "count": 70,
  "event_locations": {
   "cs2-event-8049": {
    "checked_at": "2026-10-07T16:47:27Z",
@@ -2683,6 +2683,53 @@
    "tournament": "Esports World Cup 2026"
   },
   {
+   "bestof": 3,
+   "data_note": "",
+   "duration_hours": 2.5,
+   "finished": true,
+   "key": "e63e33c0362f69a6",
+   "left": "Spirit",
+   "location": "Paris, France",
+   "maps": [
+    {
+     "map": "Cache",
+     "note": "",
+     "number": 1,
+     "scores": [
+      9,
+      13
+     ]
+    },
+    {
+     "map": "Dust2",
+     "note": "",
+     "number": 2,
+     "scores": [
+      13,
+      10
+     ]
+    },
+    {
+     "map": "Mirage",
+     "note": "",
+     "number": 3,
+     "scores": [
+      13,
+      7
+     ]
+    }
+   ],
+   "right": "BIG",
+   "score": [
+    2,
+    1
+   ],
+   "source_id": "cs2-match-2396591",
+   "start": "2026-08-15T18:10:00+00:00",
+   "status": "completed",
+   "tournament": "Esports World Cup 2026"
+  },
+  {
    "bestof": null,
    "data_note": "",
    "duration_hours": 2.0,
@@ -2709,14 +2756,42 @@
    "key": "952ad1f928661d2a",
    "left": "Vitality",
    "location": "Paris, France",
-   "maps": [],
+   "maps": [
+    {
+     "map": "Anubis",
+     "note": "",
+     "number": 1,
+     "scores": [
+      11,
+      13
+     ]
+    },
+    {
+     "map": "Nuke",
+     "note": "",
+     "number": 2,
+     "scores": [
+      16,
+      14
+     ]
+    },
+    {
+     "map": "Mirage",
+     "note": "",
+     "number": 3,
+     "scores": [
+      3,
+      13
+     ]
+    }
+   ],
    "right": "Spirit",
    "score": [
     1,
     2
    ],
-   "source_id": "manual:2026-08-21:Vitality-Spirit",
-   "start": "2026-08-21T13:37:00+00:00",
+   "source_id": "cs2-match-2396610",
+   "start": "2026-08-21T16:30:00+00:00",
    "status": "completed",
    "tournament": "Esports World Cup 2026"
   },
@@ -2728,14 +2803,33 @@
    "key": "6fb87009d1350997",
    "left": "Legacy",
    "location": "Paris, France",
-   "maps": [],
+   "maps": [
+    {
+     "map": "Dust2",
+     "note": "",
+     "number": 1,
+     "scores": [
+      7,
+      13
+     ]
+    },
+    {
+     "map": "Ancient",
+     "note": "",
+     "number": 2,
+     "scores": [
+      9,
+      13
+     ]
+    }
+   ],
    "right": "Spirit",
    "score": [
     0,
     2
    ],
-   "source_id": "manual:2026-08-22:Legacy-Spirit",
-   "start": "2026-08-22T15:02:00+00:00",
+   "source_id": "cs2-match-2396612",
+   "start": "2026-08-22T18:00:00+00:00",
    "status": "completed",
    "tournament": "Esports World Cup 2026"
   },
@@ -2747,14 +2841,51 @@
    "key": "6ea4af4930d3f94b",
    "left": "FUT",
    "location": "Paris, France",
-   "maps": [],
+   "maps": [
+    {
+     "map": "Cache",
+     "note": "",
+     "number": 1,
+     "scores": [
+      13,
+      10
+     ]
+    },
+    {
+     "map": "Anubis",
+     "note": "",
+     "number": 2,
+     "scores": [
+      13,
+      16
+     ]
+    },
+    {
+     "map": "Ancient",
+     "note": "",
+     "number": 3,
+     "scores": [
+      14,
+      16
+     ]
+    },
+    {
+     "map": "Nuke",
+     "note": "",
+     "number": 4,
+     "scores": [
+      5,
+      13
+     ]
+    }
+   ],
    "right": "Spirit",
    "score": [
     1,
     3
    ],
-   "source_id": "manual:2026-08-23:FUT-Spirit",
-   "start": "2026-08-23T09:16:00+00:00",
+   "source_id": "cs2-match-2396614",
+   "start": "2026-08-23T12:15:00+00:00",
    "status": "completed",
    "tournament": "Esports World Cup 2026"
   },
@@ -3568,6 +3699,22 @@
    "source_id": "cs2-match-2399853",
    "start": "2026-11-11T06:30:00+00:00",
    "status": "completed",
+   "tournament": "BLAST Rivals 2026 Season 2"
+  },
+  {
+   "bestof": 3,
+   "data_note": "",
+   "duration_hours": 2.5,
+   "finished": false,
+   "key": "ab79ccc6cb26c2d9",
+   "left": "Spirit",
+   "location": "Chek Lap Kok, Hong Kong",
+   "maps": [],
+   "right": "G2",
+   "score": null,
+   "source_id": "cs2-match-2400203",
+   "start": "2026-11-12T10:50:00+00:00",
+   "status": "upcoming",
    "tournament": "BLAST Rivals 2026 Season 2"
   }
  ],
