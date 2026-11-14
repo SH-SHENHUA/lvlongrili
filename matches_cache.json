@@ -3712,7 +3712,7 @@
     1
    ],
    "source_id": "cs2-match-2399853",
-   "start": "2026-11-11T09:16:12+00:00",
+   "start": "2026-11-11T06:30:00+00:00",
    "status": "completed",
    "tournament": "BLAST Rivals 2026 Season 2"
   },
@@ -3759,7 +3759,7 @@
     1
    ],
    "source_id": "cs2-match-2400203",
-   "start": "2026-11-12T13:45:10+00:00",
+   "start": "2026-11-12T10:40:00+00:00",
    "status": "completed",
    "tournament": "BLAST Rivals 2026 Season 2"
   },
@@ -3767,16 +3767,29 @@
    "bestof": 3,
    "data_note": "",
    "duration_hours": 2.5,
-   "finished": false,
+   "finished": true,
    "key": "e9e8e8f959cdfa6c",
    "left": "Spirit",
    "location": "Chek Lap Kok, Hong Kong",
-   "maps": [],
+   "maps": [
+    {
+     "map": "Mirage",
+     "note": "",
+     "number": 1,
+     "scores": [
+      13,
+      7
+     ]
+    }
+   ],
    "right": "MOUZ",
-   "score": null,
+   "score": [
+    1,
+    0
+   ],
    "source_id": "cs2-match-2400206",
    "start": "2026-11-14T08:00:00+00:00",
-   "status": "upcoming",
+   "status": "completed",
    "tournament": "BLAST Rivals 2026 Season 2"
   }
  ],
