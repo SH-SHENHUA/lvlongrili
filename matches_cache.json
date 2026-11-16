@@ -565,7 +565,7 @@
    "status": "completed"
   },
   "cs2-event-8251": {
-   "checked_at": "2026-11-15T10:27:34Z",
+   "checked_at": "2026-11-16T10:43:32Z",
    "endsAt": "2026-11-15T23:59:59.000Z",
    "fetched_ids": [],
    "isLan": true,
@@ -583,6 +583,21 @@
        "id": "cs2-team-4494",
        "name": "MOUZ",
        "score": 0
+      }
+     ]
+    },
+    {
+     "id": "cs2-match-2400208",
+     "teams": [
+      {
+       "id": "cs2-team-7020",
+       "name": "Spirit",
+       "score": 0
+      },
+      {
+       "id": "cs2-team-8297",
+       "name": "FURIA",
+       "score": 3
       }
      ]
     },
@@ -618,7 +633,7 @@
     }
    ],
    "name": "BLAST Rivals 2026 Season 2",
-   "status": "live"
+   "status": "completed"
   },
   "cs2-event-8261": {
    "checked_at": "2026-10-07T16:46:28Z",
@@ -3820,16 +3835,47 @@
    "bestof": 5,
    "data_note": "",
    "duration_hours": 4.0,
-   "finished": false,
+   "finished": true,
    "key": "421a029d7aca384e",
    "left": "Spirit",
    "location": "Chek Lap Kok, Hong Kong",
-   "maps": [],
+   "maps": [
+    {
+     "map": "Ancient",
+     "note": "",
+     "number": 1,
+     "scores": [
+      11,
+      13
+     ]
+    },
+    {
+     "map": "Dust2",
+     "note": "",
+     "number": 2,
+     "scores": [
+      5,
+      13
+     ]
+    },
+    {
+     "map": "Mirage",
+     "note": "",
+     "number": 3,
+     "scores": [
+      8,
+      13
+     ]
+    }
+   ],
    "right": "FURIA",
-   "score": null,
+   "score": [
+    0,
+    3
+   ],
    "source_id": "cs2-match-2400208",
    "start": "2026-11-15T08:00:00+00:00",
-   "status": "live",
+   "status": "completed",
    "tournament": "BLAST Rivals 2026 Season 2"
   }
  ],
